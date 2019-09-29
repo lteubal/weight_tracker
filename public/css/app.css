@@ -10651,3 +10651,7 @@ a.text-dark:focus {
   }
 }
 
+.body {
+  min-width: 500px;
+}
+
