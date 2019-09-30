@@ -201,7 +201,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "BadgeComponent",
-  props: ['badge', 'badgeValue', 'weightUnit']
+  props: ['badge', 'badgeValue', 'unit']
 });
 
 /***/ }),
@@ -242,6 +242,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -249,7 +255,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   components: {
     BadgeComponent: _BadgeComponent__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['getCurrentWeight', 'getUser']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['getCurrentWeight', 'getUser', 'getAge']), {
     idealWeight: function idealWeight() {
       var lemmens_equation = this.kgToPounds(22 * this.inchesToMeters(this.getUser.height_in_inches) * this.inchesToMeters(this.getUser.height_in_inches));
       return lemmens_equation.toFixed(2);
@@ -260,11 +266,29 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var bmi_formula_min_rounded = bmi_formula_min.toFixed(0);
       var bmi_formula_max_rounded = bmi_formula_max.toFixed(0);
       return bmi_formula_min_rounded + " to " + bmi_formula_max_rounded;
+    },
+    caloriesNeeded: function caloriesNeeded() {
+      var totalDailyNeeds = 0;
+
+      if (this.getUser.gender.toLowerCase() == "female") {
+        var bmr = 655 + 4.3 * this.getCurrentWeight + 4.7 * this.getUser.height_in_inches - 4.7 * this.getAge;
+        totalDailyNeeds = bmr * this.getUser.activity_level / 100 + bmr;
+      } else {
+        var _bmr = 66 + 6.3 * this.getCurrentWeight + 12.9 * this.getUser.height_in_inches - 6.8 * this.getAge;
+
+        totalDailyNeeds = _bmr * this.getUser.activity_level / 100 + _bmr;
+      }
+
+      return Math.round(totalDailyNeeds);
+    },
+    caloriesToLoseOnePound: function caloriesToLoseOnePound() {
+      return this.caloriesNeeded - 500;
     }
   }),
   data: function data() {
     return {
       weightUnit: 'lbs',
+      calorieUnit: 'calories',
       badge1: {
         text: "Current Weight",
         color: "red lighten-3",
@@ -284,6 +308,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         text: "Ideal Weight",
         color: "orange lighten-3",
         icon: 'accessibility_new'
+      },
+      badge5: {
+        text: "Daily calorie needs",
+        color: "brown lighten-3",
+        icon: 'fastfood'
+      },
+      badge6: {
+        text: "Lose 1 lb/week",
+        color: "pink lighten-3",
+        icon: 'arrow_downward'
       }
     };
   },
@@ -429,6 +463,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _WeightInfoComponent__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./WeightInfoComponent */ "./resources/js/components/WeightInfoComponent.vue");
 /* harmony import */ var _PersonalInfoComponent__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PersonalInfoComponent */ "./resources/js/components/PersonalInfoComponent.vue");
 /* harmony import */ var _BadgesComponent__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./BadgesComponent */ "./resources/js/components/BadgesComponent.vue");
+//
 //
 //
 //
@@ -793,7 +828,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       system: 'Standard',
       desiredWeight: 0,
       files: null,
-      genderList: ['Male', 'Female', 'Others'],
+      genderList: ['Male', 'Female', ' - '],
       gender: '',
       feet: 5,
       inches: 4,
@@ -1000,11 +1035,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "TimelineComponent",
   data: function data() {
     return {
+      page: 1,
+      weightsPerPage: 10,
+      totalPages: 1,
+      entriesPerPageList: [2, 5, 10, 15, 20, 50, 100],
       menu: '',
       newWeightValueToCreate: 0,
       newDateToCreate: new Date().toISOString().substr(0, 10),
@@ -1028,6 +1077,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['getWeights', 'hasWeights', 'getNextWeightId']), {
     getUser: function getUser() {
       return this.$store.getters.getUser;
+    },
+    getTotalPages: function getTotalPages() {
+      var weights = this.getWeights;
+      var totalWeights = weights.length;
+      var totalPages = Math.ceil(totalWeights / this.weightsPerPage);
+      this.totalPages = totalPages;
+      return totalPages;
+    },
+    getWeightsPaginated: function getWeightsPaginated() {
+      var weights = this.getWeights.slice((this.page - 1) * this.weightsPerPage, this.page * this.weightsPerPage);
+      return weights;
     }
   }),
   methods: {
@@ -3343,11 +3403,7 @@ var render = function() {
                       staticClass:
                         "title font-weight-bold grey--text text--darken-2"
                     },
-                    [
-                      _vm._v(
-                        _vm._s(_vm.badgeValue) + " " + _vm._s(_vm.weightUnit)
-                      )
-                    ]
+                    [_vm._v(_vm._s(_vm.badgeValue) + " " + _vm._s(_vm.unit))]
                   )
                 ])
               ],
@@ -3396,7 +3452,7 @@ var render = function() {
                 attrs: {
                   badge: _vm.badge1,
                   badgeValue: _vm.getCurrentWeight,
-                  weightUnit: _vm.weightUnit
+                  unit: _vm.weightUnit
                 }
               })
             ],
@@ -3411,7 +3467,7 @@ var render = function() {
                 attrs: {
                   badge: _vm.badge2,
                   badgeValue: _vm.getUser.desired_weight,
-                  weightUnit: _vm.weightUnit
+                  unit: _vm.weightUnit
                 }
               })
             ],
@@ -3426,7 +3482,7 @@ var render = function() {
                 attrs: {
                   badge: _vm.badge3,
                   badgeValue: _vm.healthyBMIRange,
-                  weightUnit: _vm.weightUnit
+                  unit: _vm.weightUnit
                 }
               })
             ],
@@ -3441,7 +3497,37 @@ var render = function() {
                 attrs: {
                   badge: _vm.badge4,
                   badgeValue: _vm.idealWeight,
-                  weightUnit: _vm.weightUnit
+                  unit: _vm.weightUnit
+                }
+              })
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-flex",
+            { attrs: { xs6: "", sm6: "", md6: "" } },
+            [
+              _c("badge-component", {
+                attrs: {
+                  badge: _vm.badge5,
+                  badgeValue: _vm.caloriesNeeded,
+                  unit: _vm.calorieUnit
+                }
+              })
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-flex",
+            { attrs: { xs6: "", sm6: "", md6: "" } },
+            [
+              _c("badge-component", {
+                attrs: {
+                  badge: _vm.badge6,
+                  badgeValue: _vm.caloriesToLoseOnePound,
+                  unit: _vm.calorieUnit
                 }
               })
             ],
@@ -3714,47 +3800,6 @@ var render = function() {
                                           [
                                             _c(
                                               "v-card-text",
-                                              { staticClass: "pb-1" },
-                                              [
-                                                _c(
-                                                  "p",
-                                                  {
-                                                    staticClass: "text-center"
-                                                  },
-                                                  [
-                                                    _c(
-                                                      "personal-info-component"
-                                                    )
-                                                  ],
-                                                  1
-                                                )
-                                              ]
-                                            )
-                                          ],
-                                          1
-                                        )
-                                      ],
-                                      1
-                                    ),
-                                    _vm._v(" "),
-                                    _c(
-                                      "v-flex",
-                                      {
-                                        attrs: { xs12: "", sm12: "", md6: "" }
-                                      },
-                                      [
-                                        _c(
-                                          "v-card",
-                                          {
-                                            attrs: {
-                                              tile: "",
-                                              flat: "",
-                                              color: "grey lighten-2"
-                                            }
-                                          },
-                                          [
-                                            _c(
-                                              "v-card-text",
                                               { staticClass: "pt-1" },
                                               [
                                                 _c(
@@ -3814,6 +3859,47 @@ var render = function() {
                                     attrs: { column: "" }
                                   },
                                   [
+                                    _c(
+                                      "v-flex",
+                                      {
+                                        attrs: { xs12: "", sm12: "", md6: "" }
+                                      },
+                                      [
+                                        _c(
+                                          "v-card",
+                                          {
+                                            attrs: {
+                                              tile: "",
+                                              flat: "",
+                                              color: "grey lighten-2"
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "v-card-text",
+                                              { staticClass: "pb-1" },
+                                              [
+                                                _c(
+                                                  "p",
+                                                  {
+                                                    staticClass: "text-center"
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "personal-info-component"
+                                                    )
+                                                  ],
+                                                  1
+                                                )
+                                              ]
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    ),
+                                    _vm._v(" "),
                                     _vm.hasWeight && _vm.hasHeight
                                       ? _c(
                                           "v-flex",
@@ -5240,16 +5326,50 @@ var render = function() {
             { attrs: { "primary-title": "" } },
             [
               _c(
-                "v-btn",
-                {
-                  attrs: { text: "", color: "success" },
-                  on: {
-                    click: function($event) {
-                      _vm.createWeightDialog = true
-                    }
-                  }
-                },
-                [_vm._v("+ Add new weight")]
+                "v-row",
+                [
+                  _c(
+                    "v-col",
+                    { attrs: { sm: "3", md: "3" } },
+                    [
+                      _c("v-select", {
+                        attrs: {
+                          items: _vm.entriesPerPageList,
+                          label: "Entries per page"
+                        },
+                        model: {
+                          value: _vm.weightsPerPage,
+                          callback: function($$v) {
+                            _vm.weightsPerPage = $$v
+                          },
+                          expression: "weightsPerPage"
+                        }
+                      })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-col",
+                    { staticClass: "mt-4", attrs: { sm: "9", md: "9" } },
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { text: "", color: "success" },
+                          on: {
+                            click: function($event) {
+                              _vm.createWeightDialog = true
+                            }
+                          }
+                        },
+                        [_vm._v("+ Add new weight")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
               ),
               _vm._v(" "),
               _c("v-divider"),
@@ -5261,7 +5381,7 @@ var render = function() {
                       staticClass: "aligned-left",
                       attrs: { right: "", clipped: "", light: "" }
                     },
-                    _vm._l(_vm.getWeights, function(element) {
+                    _vm._l(_vm.getWeightsPaginated, function(element) {
                       return _c(
                         "v-timeline-item",
                         {
@@ -5566,7 +5686,29 @@ var render = function() {
                     }),
                     1
                   )
-                : _vm._e()
+                : _vm._e(),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "text-center" },
+                [
+                  _c("v-pagination", {
+                    attrs: {
+                      length: _vm.getTotalPages,
+                      "prev-icon": "mdi-menu-left",
+                      "next-icon": "mdi-menu-right"
+                    },
+                    model: {
+                      value: _vm.page,
+                      callback: function($$v) {
+                        _vm.page = $$v
+                      },
+                      expression: "page"
+                    }
+                  })
+                ],
+                1
+              )
             ],
             1
           )
@@ -55939,6 +56081,11 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 var state = {
   current_bmi: 0,
   weights: [{
+    id: 11,
+    userId: 1,
+    date: "2019-03-21",
+    weight: "168.20"
+  }, {
     id: 10,
     userId: 1,
     date: "2019-03-21",
@@ -56085,6 +56232,18 @@ var getters = {
   getCurrentBMI: function getCurrentBMI(state, getters) {
     var bmi = 703 * getters.getCurrentWeight / (getters.getUser.height_in_inches * getters.getUser.height_in_inches);
     return bmi.toFixed(1);
+  },
+  getAge: function getAge() {
+    var today = new Date();
+    var birthDate = new Date(state.user.birthdate);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+
+    if (m < 0 || m === 0 && today.getDate() < birthDate.getDate()) {
+      age--;
+    }
+
+    return age;
   },
   getCurrentBMILevel: function getCurrentBMILevel(state, getters) {
     var bmi = getters.getCurrentBMI;

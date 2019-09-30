@@ -6,6 +6,12 @@ Vue.use(Vuex);
 const state = {
   current_bmi: 0,
   weights: [{
+      id: 11,
+      userId: 1,
+      date: "2019-03-21",
+      weight: "168.20"
+    },
+    {
       id: 10,
       userId: 1,
       date: "2019-03-21",
@@ -162,6 +168,16 @@ const getters = {
   getCurrentBMI(state, getters) {
     let bmi = 703 * getters.getCurrentWeight / (getters.getUser.height_in_inches * getters.getUser.height_in_inches);
     return bmi.toFixed(1);
+  },
+  getAge() {
+    var today = new Date();
+    var birthDate = new Date(state.user.birthdate);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
   },
   getCurrentBMILevel(state, getters) {
     let bmi = getters.getCurrentBMI;

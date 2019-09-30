@@ -11,7 +11,7 @@
       </v-list-item-content>
     </v-list-item>
     <v-card-text>
-      <span class="title font-weight-bold grey--text text--darken-2">{{ badgeValue }} {{ weightUnit }}</span>
+      <span class="title font-weight-bold grey--text text--darken-2">{{ badgeValue }} {{ unit }}</span>
     </v-card-text>
   </v-card>
 </v-hover>
@@ -20,6 +20,6 @@
 <script>
 export default {
   name: "BadgeComponent",
-  props: ['badge', 'badgeValue', 'weightUnit']
+  props: ['badge', 'badgeValue', 'unit']
 }
 </script>

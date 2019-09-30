@@ -211,7 +211,7 @@ export default {
       system: 'Standard',
       desiredWeight: 0, 
       files: null,
-      genderList: ['Male', 'Female', 'Others'],
+      genderList: ['Male', 'Female', ' - '],
       gender: '',
       feet: 5,
       inches: 4,

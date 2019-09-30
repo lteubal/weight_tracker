@@ -41,15 +41,7 @@
             <v-card-text class="pa-0">
               <p class="text-center">
                 <v-layout column class="pa-0">
-                  <v-flex xs12 sm12 md6>
-                    <v-card tile flat color="grey lighten-2">
-                      <v-card-text class="pb-1">
-                        <p class="text-center">
-                          <personal-info-component />
-                        </p>
-                      </v-card-text>
-                    </v-card>
-                  </v-flex>
+                 
                   <v-flex xs12 sm12 md6>
                     <v-card tile flat color="grey lighten-2">
                       <v-card-text class="pt-1">
@@ -69,6 +61,15 @@
             <v-card-text class="pa-0">
               <p class="text-center">
                 <v-layout column class="pa-0">
+                   <v-flex xs12 sm12 md6>
+                    <v-card tile flat color="grey lighten-2">
+                      <v-card-text class="pb-1">
+                        <p class="text-center">
+                          <personal-info-component />
+                        </p>
+                      </v-card-text>
+                    </v-card>
+                  </v-flex>
                   <v-flex v-if="hasWeight && hasHeight" xs12 sm12 md6>
                     <v-card tile flat color="grey lighten-2">
                       <v-card-text class="pb-1">

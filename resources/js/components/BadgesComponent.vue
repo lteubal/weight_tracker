@@ -2,16 +2,22 @@
 <div>
   <v-layout row class="ma-1 ">
     <v-flex xs6 sm6 md6>
-      <badge-component :badge="badge1" :badgeValue="getCurrentWeight" :weightUnit="weightUnit" />
+      <badge-component :badge="badge1" :badgeValue="getCurrentWeight" :unit="weightUnit" />
     </v-flex>
     <v-flex xs6 sm6 md6>
-      <badge-component :badge="badge2" :badgeValue="getUser.desired_weight" :weightUnit="weightUnit" />
+      <badge-component :badge="badge2" :badgeValue="getUser.desired_weight" :unit="weightUnit" />
     </v-flex>
     <v-flex xs6 sm6 md6>
-      <badge-component :badge="badge3" :badgeValue="healthyBMIRange" :weightUnit="weightUnit" />
+      <badge-component :badge="badge3" :badgeValue="healthyBMIRange" :unit="weightUnit" />
     </v-flex>
     <v-flex xs6 sm6 md6>
-      <badge-component :badge="badge4" :badgeValue="idealWeight" :weightUnit="weightUnit" />
+      <badge-component :badge="badge4" :badgeValue="idealWeight" :unit="weightUnit" />
+    </v-flex>
+    <v-flex xs6 sm6 md6>
+      <badge-component :badge="badge5" :badgeValue="caloriesNeeded" :unit="calorieUnit" />
+    </v-flex>
+    <v-flex xs6 sm6 md6>
+      <badge-component :badge="badge6" :badgeValue="caloriesToLoseOnePound" :unit="calorieUnit" />
     </v-flex>
   </v-layout>
 </div>
@@ -30,7 +36,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getCurrentWeight', 'getUser'
+      'getCurrentWeight', 'getUser','getAge'
     ]),
     idealWeight() {
       let lemmens_equation = this.kgToPounds(22 * this.inchesToMeters(this.getUser.height_in_inches) * this.inchesToMeters(this.getUser.height_in_inches));
@@ -42,11 +48,26 @@ export default {
       let bmi_formula_min_rounded = bmi_formula_min.toFixed(0);
       let bmi_formula_max_rounded = bmi_formula_max.toFixed(0);
       return bmi_formula_min_rounded + " to " + bmi_formula_max_rounded;
+    },
+    caloriesNeeded() {
+      let totalDailyNeeds = 0;
+      if (this.getUser.gender.toLowerCase() == "female") {
+        const bmr = 655 + (4.3 * this.getCurrentWeight) + (4.7 * this.getUser.height_in_inches) - (4.7 * this.getAge);
+        totalDailyNeeds = bmr * this.getUser.activity_level / 100 + bmr;
+      } else {
+        const bmr = 66 + (6.3 * this.getCurrentWeight) + (12.9 * this.getUser.height_in_inches) - (6.8 * this.getAge);
+        totalDailyNeeds = bmr * this.getUser.activity_level / 100 + bmr;
+      } 
+      return Math.round(totalDailyNeeds);
+    },
+    caloriesToLoseOnePound() { 
+      return this.caloriesNeeded - 500;
     }
   },
   data() {
     return {
       weightUnit: 'lbs',
+      calorieUnit: 'calories',
       badge1: {
         text: "Current Weight",
         color: "red lighten-3",
@@ -66,6 +87,16 @@ export default {
         text: "Ideal Weight",
         color: "orange lighten-3",
         icon: 'accessibility_new'
+      },
+      badge5: {
+        text: "Daily calorie needs",
+        color: "brown lighten-3",
+        icon: 'fastfood'
+      },
+      badge6: {
+        text: "Lose 1 lb/week",
+        color: "pink lighten-3",
+        icon: 'arrow_downward'
       }
     }
   },
