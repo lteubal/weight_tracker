@@ -69,16 +69,14 @@ const state = {
   user: {
     id: 1,
     name: 'Joe',
-    lastname: 'Smith',
+    last_name: 'Smith',
     email: 'jsmith@gmail.com',
     desired_weight: '160',
     height_in_inches: '74.5',
     gender: 'male',
-    birthdate: '1930-01-01',
-    activity_level: '83',
-    weight_unit: 'pounds',
-    height_unit: 'feet',
-    energy_unit: 'calories',
+    birthdate: '1930-12-31',
+    activity_level: '85',
+    system: 'Standard',
     avatar: '/images/avatar.png'
   }
 };
@@ -97,6 +95,9 @@ const mutations = {
       }
       return element;
     });
+  },
+  UPDATE_USER(state, user) {
+    state.user = user;
   }
 };
 
@@ -109,6 +110,9 @@ const actions = {
   },
   updateWeight(context, element) {
     context.commit("UPDATE_WEIGHT", element);
+  },
+  updateUser(context, user) {
+    context.commit("UPDATE_USER", user);
   }
 };
 

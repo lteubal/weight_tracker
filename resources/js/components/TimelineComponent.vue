@@ -11,11 +11,11 @@
           <v-container>
             <v-row>
               <v-col cols="12" sm="6" md="4">
-                <v-text-field v-model="newWeightValueToCreate" :rules="rules" prepend-icon="get_app" class="title font-weight-bold" label="Weight in pounds" @keypress="allowOnlyNumbers"  ></v-text-field>
+                <v-text-field v-model="newWeightValueToCreate" :rules="rules" prepend-icon="get_app" class="title font-weight-bold" suffix="lbs" label="Weight" @keypress="allowOnlyNumbers"  ></v-text-field>
 
                 <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="newDateToCreate" transition="scale-transition" offset-y min-width="290px">
                   <template v-slot:activator="{ on }">
-                    <v-text-field v-model="newDateToCreate" label="Picker in menu" class="title font-weight-bold" prepend-icon="event" readonly v-on="on"></v-text-field>
+                    <v-text-field v-model="newDateToCreate" label="Entry Date" class="title font-weight-bold" prepend-icon="event" readonly v-on="on"></v-text-field>
                   </template>
                   <v-date-picker v-model="newDateToCreate"  scrollable>
                     <div class="flex-grow-1"></div>
@@ -74,7 +74,7 @@
         <v-timeline-item v-for="element in getWeights" :icon="element.icon" :key="element.id" right class="mb-4" :color="element.colorBack" small>
            <v-row justify="space-between">
             <v-col cols="8">
-              <v-text-field v-if="isEditing(element.id)" v-model="elementValue" :rules="rules" :color="element.colorBack" class="headline font-weight-bold" hint="Weight in pounds" @keypress="allowOnlyNumbers" :value="element.weight"></v-text-field>
+              <v-text-field v-if="isEditing(element.id)" v-model="elementValue" :rules="rules" :color="element.colorBack" suffix="lbs" class="headline font-weight-bold" hint="Weight" @keypress="allowOnlyNumbers" :value="element.weight"></v-text-field>
               <span v-else :class="element.color" class="headline font-weight-bold text--darken-4">{{ element.weight}}</span>
               <span v-if="isNotEditing(element.id)" class="title darkgray--text">lbs</span>
             </v-col>

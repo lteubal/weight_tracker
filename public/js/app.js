@@ -577,6 +577,164 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -624,27 +782,87 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "PersonalInfoComponent",
+  data: function data() {
+    var _ref;
+
+    return _ref = {
+      editMode: false,
+      name: '',
+      lastName: '',
+      email: '',
+      system: 'Standard',
+      desiredWeight: 0,
+      files: null,
+      genderList: ['Male', 'Female', 'Others'],
+      gender: '',
+      feet: 5,
+      inches: 4,
+      feetList: [4, 5, 6, 7],
+      inchesList: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    }, _defineProperty(_ref, "editMode", false), _defineProperty(_ref, "menu", false), _defineProperty(_ref, "birthdate", ''), _defineProperty(_ref, "activityLevel", 10), _defineProperty(_ref, "avatar", ''), _defineProperty(_ref, "rulesAvatar", [function (value) {
+      return !value || value.size < 2000000 || 'Avatar size should be less than 2 MB!';
+    }]), _ref;
+  },
   computed: {
     getUser: function getUser() {
       return this.$store.getters.getUser;
     },
     fullname: function fullname() {
-      return this.getUser.name + ' ' + this.getUser.lastname;
+      return this.getUser.name + ' ' + this.getUser.last_name;
     },
-    birthdate: function birthdate() {
-      var FormattedDate = new Date(this.getUser.birthdate + ' EDT');
-      return FormattedDate.toDateString();
+    birthdateFormatted: function birthdateFormatted() {
+      var FormattedDate = new Date(this.getUser.birthdate + 'T00:00:00').toISOString().substr(0, 10);
+      return FormattedDate;
     },
-    gender: function gender() {
-      var gender = this.getUser.gender;
-      var genderCapitalized = gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase();
-      return genderCapitalized;
+    getGender: function getGender() {
+      return this.getUser.gender.charAt(0).toUpperCase() + this.getUser.gender.slice(1).toLowerCase();
+    },
+    getSystem: function getSystem() {
+      return this.getUser.system.charAt(0).toUpperCase() + this.getUser.system.slice(1).toLowerCase();
     },
     height: function height() {
       var feet = Math.floor(this.getUser.height_in_inches / 12);
       var inches = this.getUser.height_in_inches % 12;
-      return "".concat(feet, "' ").concat(inches, "\"");
+      this.feet = feet;
+      this.inches = Math.round(inches);
+      return "".concat(this.feet, "' ").concat(this.inches, "\"");
     }
+  },
+  methods: {
+    updateUser: function updateUser() {
+      var element = {};
+      element.id = this.getUser.id;
+      element.name = this.name;
+      element.last_name = this.lastName;
+      element.email = this.email;
+      element.desired_weight = +this.desiredWeight;
+      element.height_in_inches = +this.feet * 12 + this.inches;
+      element.gender = this.gender;
+      element.birthdate = this.birthdate;
+      element.activity_level = +this.activityLevel;
+      element.system = this.system;
+      element.avatar = this.avatar;
+      this.handleFileUpload();
+      this.$store.dispatch('updateUser', element);
+      this.editMode = false;
+    },
+    undoEditting: function undoEditting() {
+      this.editMode = false;
+    },
+    handleFileUpload: function handleFileUpload() {
+      console.log(this.files);
+    }
+  },
+  mounted: function mounted() {
+    this.birthdate = this.birthdateFormatted;
+    this.activityLevel = this.getUser.activity_level;
+    this.name = this.getUser.name;
+    this.lastName = this.getUser.last_name;
+    this.email = this.getUser.email;
+    this.gender = this.getGender;
+    this.system = this.getSystem;
+    this.desiredWeight = this.getUser.desired_weight;
+    this.avatar = this.getUser.avatar;
   }
 });
 
@@ -3273,7 +3491,7 @@ var render = function() {
                 _c(
                   "span",
                   { staticClass: "font-weight-bold header ml-3 grey--text" },
-                  [_vm._v("Weight Chart")]
+                  [_vm._v("Weight History Chart")]
                 ),
                 _vm._v(" "),
                 _c("v-sparkline", {
@@ -3738,115 +3956,885 @@ var render = function() {
   return _c(
     "div",
     [
-      _c(
-        "v-card",
-        { attrs: { color: "grey lighten-5", light: "", text: "", hover: "" } },
-        [
-          _c(
-            "v-card-title",
-            { attrs: { "primary-title": "" } },
+      !_vm.editMode
+        ? _c(
+            "v-card",
+            {
+              attrs: { color: "grey lighten-5", light: "", text: "", hover: "" }
+            },
             [
               _c(
-                "div",
-                { staticClass: "subtitle-3 text-left" },
+                "v-card-title",
+                { attrs: { "primary-title": "" } },
                 [
-                  _c("v-avatar", { attrs: { size: "55" } }, [
-                    _c("img", { attrs: { src: _vm.getUser.avatar } })
-                  ]),
+                  _c(
+                    "div",
+                    { staticClass: "subtitle-3 text-left" },
+                    [
+                      _vm.avatar
+                        ? _c("v-avatar", { attrs: { size: "55" } }, [
+                            _c("img", { attrs: { src: _vm.avatar } })
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c("span", [_vm._v(_vm._s(_vm.fullname))]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "subtitle-2 grey--text " }, [
+                        _vm.avatar
+                          ? _c("span", { staticClass: "ml-12" })
+                          : _vm._e(),
+                        _vm._v(_vm._s(_vm.email))
+                      ])
+                    ],
+                    1
+                  ),
                   _vm._v(" "),
-                  _c("span", [_vm._v(_vm._s(_vm.fullname))])
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    { attrs: { small: "", text: "" } },
+                    [
+                      _c(
+                        "v-icon",
+                        {
+                          staticClass: "mx-1",
+                          attrs: { small: "", left: "", title: "Edit" },
+                          on: {
+                            click: function($event) {
+                              _vm.editMode = true
+                            }
+                          }
+                        },
+                        [_vm._v("edit")]
+                      )
+                    ],
+                    1
+                  )
                 ],
                 1
               ),
               _vm._v(" "),
-              _c("v-spacer"),
-              _vm._v(" "),
               _c(
-                "v-btn",
-                { attrs: { small: "", text: "" } },
+                "v-card-text",
+                { staticClass: " text-left", attrs: { "primary-title": "" } },
                 [
+                  _c("v-divider"),
+                  _vm._v(" "),
                   _c(
-                    "v-icon",
-                    {
-                      staticClass: "mx-1",
-                      attrs: { small: "", left: "", title: "Edit" }
-                    },
-                    [_vm._v("edit")]
+                    "v-layout",
+                    { attrs: { row: "" } },
+                    [
+                      _c("v-flex", { attrs: { xs1: "" } }),
+                      _vm._v(" "),
+                      _c("v-flex", { attrs: { xs5: "" } }, [
+                        _c("div", { staticClass: "grey--text info-text" }, [
+                          _vm._v("Birthdate: " + _vm._s(_vm.birthdate))
+                        ]),
+                        _vm._v(" "),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "grey--text info-text" }, [
+                          _vm._v("Height: " + _vm._s(_vm.height))
+                        ]),
+                        _vm._v(" "),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "grey--text info-text" }, [
+                          _vm._v("System Units: " + _vm._s(_vm.system))
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("v-flex", { attrs: { xs5: "" } }, [
+                        _c(
+                          "div",
+                          { staticClass: "grey--text info-text" },
+                          [
+                            _vm._v("Activity Level:\r\n            "),
+                            _c(
+                              "v-progress-circular",
+                              {
+                                staticClass: "ml-2",
+                                attrs: {
+                                  value: _vm.getUser.activity_level,
+                                  color: "blue-grey"
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  _vm._s(_vm.getUser.activity_level) +
+                                    "\r\n            "
+                                )
+                              ]
+                            )
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "grey--text info-text" }, [
+                          _vm._v("Gender: " + _vm._s(_vm.gender))
+                        ]),
+                        _vm._v(" "),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "grey--text info-text" }, [
+                          _vm._v("Desired Weight: " + _vm._s(_vm.desiredWeight))
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("v-flex", { attrs: { xs1: "" } })
+                    ],
+                    1
                   )
                 ],
                 1
               )
             ],
             1
-          ),
-          _vm._v(" "),
-          _c(
-            "v-card-text",
-            { staticClass: " text-left", attrs: { "primary-title": "" } },
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.editMode
+        ? _c(
+            "v-card",
+            {
+              attrs: { color: "grey lighten-5", light: "", text: "", hover: "" }
+            },
             [
-              _c("v-divider"),
-              _vm._v(" "),
               _c(
-                "v-layout",
-                { attrs: { row: "" } },
+                "v-card-text",
+                { attrs: { "primary-title": "" } },
                 [
-                  _c("v-flex", { attrs: { xs1: "" } }),
+                  _c(
+                    "div",
+                    { staticClass: "subtitle-3 text-left" },
+                    [
+                      _vm.avatar
+                        ? _c(
+                            "div",
+                            [
+                              _c(
+                                "v-layout",
+                                { attrs: { row: "" } },
+                                [
+                                  _c("v-flex", { attrs: { xs1: "" } }),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    { attrs: { xs2: "" } },
+                                    [
+                                      _c(
+                                        "v-avatar",
+                                        { attrs: { size: "55" } },
+                                        [
+                                          _c("img", {
+                                            attrs: { src: _vm.avatar }
+                                          })
+                                        ]
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    { attrs: { xs7: "" } },
+                                    [
+                                      _c("v-file-input", {
+                                        attrs: {
+                                          "prepend-icon": "mdi-camera",
+                                          rules: _vm.rulesAvatar,
+                                          accept:
+                                            "image/png, image/jpeg, image/bmp",
+                                          label: "Avatar",
+                                          placeholder:
+                                            "Pick new avatar to replace it"
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            return _vm.handleFileUpload()
+                                          }
+                                        },
+                                        model: {
+                                          value: _vm.files,
+                                          callback: function($$v) {
+                                            _vm.files = $$v
+                                          },
+                                          expression: "files"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "text-right",
+                                      attrs: { xs1: "" }
+                                    },
+                                    [
+                                      _c(
+                                        "v-btn",
+                                        { attrs: { "x-small": "", text: "" } },
+                                        [
+                                          _c(
+                                            "v-btn",
+                                            {
+                                              attrs: {
+                                                "x-small": "",
+                                                icon: "",
+                                                color: "black"
+                                              }
+                                            },
+                                            [
+                                              _c(
+                                                "v-icon",
+                                                {
+                                                  staticClass: "mx-1",
+                                                  attrs: {
+                                                    small: "",
+                                                    left: "",
+                                                    title: "Save"
+                                                  },
+                                                  on: {
+                                                    click: function($event) {
+                                                      return _vm.updateUser()
+                                                    }
+                                                  }
+                                                },
+                                                [_vm._v("save")]
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    { attrs: { xs1: "" } },
+                                    [
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: {
+                                            "x-small": "",
+                                            icon: "",
+                                            color: "black"
+                                          }
+                                        },
+                                        [
+                                          _c(
+                                            "v-icon",
+                                            {
+                                              staticClass: "mx-1",
+                                              attrs: {
+                                                small: "",
+                                                left: "",
+                                                title: "Undo"
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.undoEditting()
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("undo")]
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c("v-flex", { attrs: { xs1: "" } })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        : _c(
+                            "div",
+                            [
+                              _c(
+                                "v-layout",
+                                { attrs: { row: "" } },
+                                [
+                                  _c("v-flex", { attrs: { xs1: "" } }),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    { attrs: { xs8: "" } },
+                                    [
+                                      _c("v-file-input", {
+                                        attrs: {
+                                          "prepend-icon": "mdi-camera",
+                                          rules: _vm.rulesAvatar,
+                                          accept:
+                                            "image/png, image/jpeg, image/bmp",
+                                          label: "Avatar",
+                                          placeholder: "Pick an avatar"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "text-right",
+                                      attrs: { xs1: "" }
+                                    },
+                                    [
+                                      _c(
+                                        "v-btn",
+                                        { attrs: { "x-small": "", text: "" } },
+                                        [
+                                          _c(
+                                            "v-btn",
+                                            {
+                                              attrs: {
+                                                "x-small": "",
+                                                icon: "",
+                                                color: "black"
+                                              }
+                                            },
+                                            [
+                                              _c(
+                                                "v-icon",
+                                                {
+                                                  staticClass: "mx-1",
+                                                  attrs: {
+                                                    small: "",
+                                                    left: "",
+                                                    title: "Save"
+                                                  },
+                                                  on: {
+                                                    click: function($event) {
+                                                      return _vm.updateUser()
+                                                    }
+                                                  }
+                                                },
+                                                [_vm._v("save")]
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    { attrs: { xs1: "" } },
+                                    [
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: {
+                                            "x-small": "",
+                                            icon: "",
+                                            color: "black"
+                                          }
+                                        },
+                                        [
+                                          _c(
+                                            "v-icon",
+                                            {
+                                              staticClass: "mx-1",
+                                              attrs: {
+                                                small: "",
+                                                left: "",
+                                                title: "Undo"
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.undoEditting()
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("undo")]
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c("v-flex", { attrs: { xs1: "" } })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                      _vm._v(" "),
+                      _c(
+                        "v-layout",
+                        { attrs: { row: "" } },
+                        [
+                          _c("v-flex", { attrs: { xs1: "" } }),
+                          _vm._v(" "),
+                          _c(
+                            "v-flex",
+                            { attrs: { xs5: "" } },
+                            [
+                              _c("v-text-field", {
+                                attrs: { label: "Name" },
+                                model: {
+                                  value: _vm.name,
+                                  callback: function($$v) {
+                                    _vm.name = $$v
+                                  },
+                                  expression: "name"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("v-flex", { attrs: { xs1: "" } }),
+                          _vm._v(" "),
+                          _c(
+                            "v-flex",
+                            { attrs: { xs5: "" } },
+                            [
+                              _c("v-text-field", {
+                                attrs: { label: "Last Name" },
+                                model: {
+                                  value: _vm.lastName,
+                                  callback: function($$v) {
+                                    _vm.lastName = $$v
+                                  },
+                                  expression: "lastName"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-layout",
+                        { attrs: { row: "" } },
+                        [
+                          _c("v-flex", { attrs: { xs1: "" } }),
+                          _vm._v(" "),
+                          _c(
+                            "v-flex",
+                            { attrs: { xs11: "" } },
+                            [
+                              _c("v-text-field", {
+                                attrs: { label: "Email" },
+                                model: {
+                                  value: _vm.email,
+                                  callback: function($$v) {
+                                    _vm.email = $$v
+                                  },
+                                  expression: "email"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
                   _vm._v(" "),
-                  _c("v-flex", { attrs: { xs5: "" } }, [
-                    _c("div", { staticClass: "grey--text info-text" }, [
-                      _vm._v("Birthdate: " + _vm._s(_vm.birthdate))
-                    ]),
-                    _vm._v(" "),
-                    _c("br"),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "grey--text info-text" }, [
-                      _vm._v("Height: " + _vm._s(_vm.height))
-                    ])
-                  ]),
+                  _c("v-spacer"),
                   _vm._v(" "),
-                  _c("v-flex", { attrs: { xs5: "" } }, [
-                    _c(
-                      "div",
-                      { staticClass: "grey--text info-text" },
-                      [
-                        _vm._v("Activity Level:\r\n            "),
+                  _c(
+                    "v-layout",
+                    { attrs: { row: "" } },
+                    [
+                      _c("v-flex", { attrs: { xs1: "" } }),
+                      _vm._v(" "),
+                      _c(
+                        "v-flex",
+                        { staticClass: "mr-40", attrs: { xs4: "" } },
+                        [
+                          _c(
+                            "div",
+                            { staticClass: "grey--text info-text" },
+                            [
+                              _vm._v(
+                                "\r\n            Birthdate\r\n            "
+                              ),
+                              _c(
+                                "v-menu",
+                                {
+                                  ref: "menu",
+                                  attrs: {
+                                    "close-on-content-click": false,
+                                    "return-value": _vm.birthdate,
+                                    transition: "scale-transition",
+                                    "offset-y": "",
+                                    "min-width": "290px"
+                                  },
+                                  on: {
+                                    "update:returnValue": function($event) {
+                                      _vm.birthdate = $event
+                                    },
+                                    "update:return-value": function($event) {
+                                      _vm.birthdate = $event
+                                    }
+                                  },
+                                  scopedSlots: _vm._u(
+                                    [
+                                      {
+                                        key: "activator",
+                                        fn: function(ref) {
+                                          var on = ref.on
+                                          return [
+                                            _c(
+                                              "v-text-field",
+                                              _vm._g(
+                                                {
+                                                  staticStyle: {
+                                                    "margin-top": "32px"
+                                                  },
+                                                  attrs: {
+                                                    "prepend-icon": "event",
+                                                    readonly: ""
+                                                  },
+                                                  model: {
+                                                    value: _vm.birthdate,
+                                                    callback: function($$v) {
+                                                      _vm.birthdate = $$v
+                                                    },
+                                                    expression: "birthdate"
+                                                  }
+                                                },
+                                                on
+                                              )
+                                            )
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    null,
+                                    false,
+                                    1124610552
+                                  ),
+                                  model: {
+                                    value: _vm.menu,
+                                    callback: function($$v) {
+                                      _vm.menu = $$v
+                                    },
+                                    expression: "menu"
+                                  }
+                                },
+                                [
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-date-picker",
+                                    {
+                                      attrs: { scrollable: "" },
+                                      model: {
+                                        value: _vm.birthdate,
+                                        callback: function($$v) {
+                                          _vm.birthdate = $$v
+                                        },
+                                        expression: "birthdate"
+                                      }
+                                    },
+                                    [
+                                      _c("div", { staticClass: "flex-grow-1" }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: { text: "", color: "primary" },
+                                          on: {
+                                            click: function($event) {
+                                              _vm.menu = false
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Cancel")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: { text: "", color: "primary" },
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.$refs.menu.save(
+                                                _vm.birthdate
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("OK")]
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass: "grey--text info-text",
+                              staticStyle: { "margin-top": "16px" }
+                            },
+                            [
+                              _vm._v("Height:\r\n            "),
+                              _c(
+                                "div",
+                                { staticClass: "grey--text info-text" },
+                                [
+                                  _c(
+                                    "v-layout",
+                                    { attrs: { row: "" } },
+                                    [
+                                      _c("v-flex", { attrs: { xs1: "" } }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-flex",
+                                        { attrs: { xs4: "" } },
+                                        [
+                                          _c("v-select", {
+                                            attrs: {
+                                              items: _vm.feetList,
+                                              label: "Feet"
+                                            },
+                                            model: {
+                                              value: _vm.feet,
+                                              callback: function($$v) {
+                                                _vm.feet = $$v
+                                              },
+                                              expression: "feet"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c("v-flex", { attrs: { xs2: "" } }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-flex",
+                                        { attrs: { xs4: "" } },
+                                        [
+                                          _c("v-select", {
+                                            attrs: {
+                                              items: _vm.inchesList,
+                                              label: "Inches"
+                                            },
+                                            model: {
+                                              value: _vm.inches,
+                                              callback: function($$v) {
+                                                _vm.inches = $$v
+                                              },
+                                              expression: "inches"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c("v-flex", { attrs: { xs1: "" } })
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass: "grey--text info-text",
+                              staticStyle: { "margin-top": "16px" }
+                            },
+                            [
+                              _vm._v("System Units:\r\n            "),
+                              _c(
+                                "div",
+                                { staticClass: "grey--text info-text" },
+                                [
+                                  _c(
+                                    "v-layout",
+                                    { attrs: { row: "" } },
+                                    [
+                                      _c("v-flex", { attrs: { xs1: "" } }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-flex",
+                                        { attrs: { xs11: "" } },
+                                        [
+                                          [
+                                            _c(
+                                              "v-container",
+                                              { attrs: { fluid: "" } },
+                                              [
+                                                _c(
+                                                  "v-radio-group",
+                                                  {
+                                                    attrs: { column: "" },
+                                                    model: {
+                                                      value: _vm.system,
+                                                      callback: function($$v) {
+                                                        _vm.system = $$v
+                                                      },
+                                                      expression: "system"
+                                                    }
+                                                  },
+                                                  [
+                                                    _c("v-radio", {
+                                                      attrs: {
+                                                        label: "Standard",
+                                                        value: "Standard"
+                                                      }
+                                                    }),
+                                                    _vm._v(" "),
+                                                    _c("v-radio", {
+                                                      attrs: {
+                                                        label: "Metric",
+                                                        value: "Metric"
+                                                      }
+                                                    })
+                                                  ],
+                                                  1
+                                                )
+                                              ],
+                                              1
+                                            )
+                                          ]
+                                        ],
+                                        2
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("v-flex", { attrs: { xs1: "" } }),
+                      _vm._v(" "),
+                      _c("v-flex", { attrs: { xs5: "" } }, [
                         _c(
-                          "v-progress-circular",
-                          {
-                            staticClass: "ml-2",
-                            attrs: {
-                              value: _vm.getUser.activity_level,
-                              color: "blue-grey"
-                            }
-                          },
+                          "div",
+                          { staticClass: "grey--text info-text" },
                           [
-                            _vm._v(
-                              _vm._s(_vm.getUser.activity_level) +
-                                "\r\n            "
-                            )
-                          ]
+                            _vm._v("Activity Level\r\n            "),
+                            _c("span", { staticClass: "caption" }, [
+                              _c("br"),
+                              _vm._v("(0 = sedentary - 100: very active)"),
+                              _c("br"),
+                              _c("br")
+                            ]),
+                            _vm._v(" "),
+                            _c("v-slider", {
+                              attrs: {
+                                "thumb-label": "always",
+                                "thumb-size": 24,
+                                step: "5",
+                                max: 100
+                              },
+                              model: {
+                                value: _vm.activityLevel,
+                                callback: function($$v) {
+                                  _vm.activityLevel = $$v
+                                },
+                                expression: "activityLevel"
+                              }
+                            })
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "grey--text info-text" },
+                          [
+                            _vm._v("Gender\r\n            "),
+                            _c("v-select", {
+                              attrs: { items: _vm.genderList },
+                              model: {
+                                value: _vm.gender,
+                                callback: function($$v) {
+                                  _vm.gender = $$v
+                                },
+                                expression: "gender"
+                              }
+                            })
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "grey--text info-text mt-4" },
+                          [
+                            _vm._v("Desired Weight\r\n            "),
+                            _c("v-text-field", {
+                              attrs: { suffix: "lbs" },
+                              model: {
+                                value: _vm.desiredWeight,
+                                callback: function($$v) {
+                                  _vm.desiredWeight = $$v
+                                },
+                                expression: "desiredWeight"
+                              }
+                            })
+                          ],
+                          1
                         )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c("br"),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "grey--text info-text" }, [
-                      _vm._v("Gender: " + _vm._s(_vm.gender))
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("v-flex", { attrs: { xs1: "" } })
+                      ]),
+                      _vm._v(" "),
+                      _c("v-flex", { attrs: { xs1: "" } })
+                    ],
+                    1
+                  )
                 ],
                 1
               )
             ],
             1
           )
-        ],
-        1
-      )
+        : _vm._e()
     ],
     1
   )
@@ -3920,7 +4908,8 @@ var render = function() {
                                     attrs: {
                                       rules: _vm.rules,
                                       "prepend-icon": "get_app",
-                                      label: "Weight in pounds"
+                                      suffix: "lbs",
+                                      label: "Weight"
                                     },
                                     on: { keypress: _vm.allowOnlyNumbers },
                                     model: {
@@ -3966,7 +4955,7 @@ var render = function() {
                                                     staticClass:
                                                       "title font-weight-bold",
                                                     attrs: {
-                                                      label: "Picker in menu",
+                                                      label: "Entry Date",
                                                       "prepend-icon": "event",
                                                       readonly: ""
                                                     },
@@ -4344,7 +5333,8 @@ var render = function() {
                                         attrs: {
                                           rules: _vm.rules,
                                           color: element.colorBack,
-                                          hint: "Weight in pounds",
+                                          suffix: "lbs",
+                                          hint: "Weight",
                                           value: element.weight
                                         },
                                         on: { keypress: _vm.allowOnlyNumbers },
@@ -55002,16 +55992,14 @@ var state = {
   user: {
     id: 1,
     name: 'Joe',
-    lastname: 'Smith',
+    last_name: 'Smith',
     email: 'jsmith@gmail.com',
     desired_weight: '160',
     height_in_inches: '74.5',
     gender: 'male',
-    birthdate: '1930-01-01',
-    activity_level: '83',
-    weight_unit: 'pounds',
-    height_unit: 'feet',
-    energy_unit: 'calories',
+    birthdate: '1930-12-31',
+    activity_level: '85',
+    system: 'Standard',
     avatar: '/images/avatar.png'
   }
 };
@@ -55032,6 +56020,9 @@ var mutations = {
 
       return element;
     });
+  },
+  UPDATE_USER: function UPDATE_USER(state, user) {
+    state.user = user;
   }
 };
 var actions = {
@@ -55043,6 +56034,9 @@ var actions = {
   },
   updateWeight: function updateWeight(context, element) {
     context.commit("UPDATE_WEIGHT", element);
+  },
+  updateUser: function updateUser(context, user) {
+    context.commit("UPDATE_USER", user);
   }
 };
 var getters = {

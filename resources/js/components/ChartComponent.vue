@@ -1,7 +1,7 @@
 <template>
 <v-hover v-slot:default="{ hover }" :disabled="false" :value="false">
   <v-sheet :elevation="hover ? 5 : 2">
-    <span class="font-weight-bold header ml-3 grey--text">Weight Chart</span>
+    <span class="font-weight-bold header ml-3 grey--text">Weight History Chart</span>
     <v-sparkline :value="value" :gradient="gradient" :smooth="radius || false" :padding="padding" :line-width="width" :stroke-linecap="lineCap" :show-labels="true" :labels="labels" :gradient-direction="gradientDirection" :fill="fill" :type="type" :label-size="labelSize" :auto-line-width="autoLineWidth" auto-draw>
     </v-sparkline>
   </v-sheet>
