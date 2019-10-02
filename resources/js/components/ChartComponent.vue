@@ -9,18 +9,22 @@
 </template>
 
 <script>
+
+import * as constants from '../constants';
+
 import {
   mapGetters
 } from 'vuex';
 
 export default {
   data: () => ({
+    wUnit: 'lbs',
     width: 2,
     radius: 10,
     padding: 18,
     labelSize: '3',
     lineCap: 'round',
-    gradient: ['#d4190f', '#d4190f','#19c910',, '#19c910','#1221c7'],
+    gradient: ['#d4190f', '#d4190f', '#19c910', , '#19c910', '#1221c7'],
     value: [],
     labels: [],
     gradientDirection: 'top',
@@ -34,11 +38,14 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getWeights'
+      'getWeights', 'weightUnit', 'heightUnit',
     ]),
   },
   watch: {
     getWeights() {
+      this.updateChartValues();
+    },
+    weightUnit() {
       this.updateChartValues();
     }
   },
@@ -46,12 +53,18 @@ export default {
     updateChartValues() {
       let val = [];
       let lab = [];
+      let entryWeight = '';
       for (const [idx, entry] of Object.values(this.$store.getters.getWeights).entries()) {
-        val.push(+entry.weight);
+        if (this.weightUnit == "lbs") {
+          entryWeight = entry.weight;
+        } else {
+          entryWeight = (entry.weight * constants.RATIO_LBS_TO_KG).toFixed(2);
+        }
+        val.push(+entryWeight);
 
         if (idx == 0 || idx == Object.values(this.$store.getters.getWeights).length - 1) {
           let FormattedDate = new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US');
-          lab.push(FormattedDate + " - " + entry.weight + " lbs");
+          lab.push(FormattedDate + " - " + entryWeight + " " + this.weightUnit);
         } else {
           lab.push(" ");
         }

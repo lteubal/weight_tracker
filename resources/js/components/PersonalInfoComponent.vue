@@ -23,7 +23,8 @@
         <v-flex xs5>
           <div class="grey--text info-text">Birthdate: {{ birthdate }}</div>
           <br>
-          <div class="grey--text info-text">Height: {{ height}}</div>
+          <div v-if="isUsingFeet" class="grey--text info-text">Height: {{ height }}</div>
+          <div v-if="!isUsingFeet" class="grey--text info-text">Height: {{ heightInCm }}</div>
           <br>
           <div class="grey--text info-text">System Units: {{ system }}</div>
         </v-flex>
@@ -35,7 +36,7 @@
           <br>
           <div class="grey--text info-text">Gender: {{ gender }}</div>
           <br>
-          <div class="grey--text info-text">Desired Weight: {{ desiredWeight }}</div>
+          <div class="grey--text info-text">Desired Weight: {{ desiredWeight }} {{ weightUnit }}</div>
         </v-flex>
         <v-flex xs1>
         </v-flex>
@@ -56,7 +57,7 @@
               </v-avatar>
             </v-flex>
             <v-flex xs7>
-              <v-file-input  v-model='files'  @change="handleFileUpload()" prepend-icon="mdi-camera" :rules="rulesAvatar" accept="image/png, image/jpeg, image/bmp" label="Avatar" placeholder="Pick new avatar to replace it"></v-file-input>
+              <v-file-input v-model='files' @change="handleFileUpload()" prepend-icon="mdi-camera" :rules="rulesAvatar" accept="image/png, image/jpeg, image/bmp" label="Avatar" placeholder="Pick new avatar to replace it"></v-file-input>
             </v-flex>
             <v-flex xs1 class="text-right">
               <v-btn x-small text>
@@ -137,21 +138,35 @@
             </v-menu>
           </div>
           <br>
-          <div class="grey--text info-text" style="margin-top: 16px;">Height:
+          <div v-if="isUsingFeet" class="grey--text info-text" style="margin-top: 16px;">Height:
             <div class="grey--text info-text">
               <v-layout row>
                 <v-flex xs1>
                 </v-flex>
                 <v-flex xs4>
-                  <v-select v-model="feet" :items="feetList" label="Feet"></v-select>
+                  <v-select v-model="feet"  @change="updateHeight()" :items="feetList" label="Feet"></v-select>
                 </v-flex>
                 <v-flex xs2>
                 </v-flex>
                 <v-flex xs4>
-                  <v-select v-model="inches" :items="inchesList" label="Inches"></v-select>
+                  <v-select v-model="inches"  @change="updateHeight()" :items="inchesList" label="Inches"></v-select>
                 </v-flex>
                 <v-flex xs1>
                 </v-flex>
+              </v-layout>
+            </div>
+          </div>
+          <div v-if="!isUsingFeet" class="grey--text info-text" style="margin-top: 16px;">Height:
+            <div class="grey--text info-text">
+              <v-layout row>
+                <v-flex xs1>
+                </v-flex>
+                <v-flex xs9>
+                  <v-select v-model="centimeters"  @change="updateHeight()" :items="metersList" label="Cm"></v-select>
+                </v-flex>
+                <v-flex xs2>
+                </v-flex>
+
               </v-layout>
             </div>
           </div>
@@ -165,8 +180,8 @@
                   <template>
                     <v-container fluid>
                       <v-radio-group v-model="system" column>
-                        <v-radio label="Standard" value="Standard"></v-radio>
-                        <v-radio label="Metric" value="Metric"></v-radio>
+                        <v-radio label="Standard" @change="updNonSavedSelectedSystem('Standard')" value="Standard"></v-radio>
+                        <v-radio label="Metric" @change="updNonSavedSelectedSystem('Metric')" value="Metric"></v-radio>
                       </v-radio-group>
                     </v-container>
                   </template>
@@ -188,7 +203,7 @@
           </div>
           <br>
           <div class="grey--text info-text mt-4">Desired Weight
-            <v-text-field suffix="lbs" v-model="desiredWeight"></v-text-field>
+            <v-text-field :suffix="weightUnit" v-model="desiredWeight"></v-text-field>
           </div>
         </v-flex>
         <v-flex xs1>
@@ -200,6 +215,13 @@
 </template>
 
 <script>
+import * as constants from '../constants';
+
+import {
+  mapActions,
+  mapGetters
+} from 'vuex';
+
 export default {
   name: "PersonalInfoComponent",
   data() {
@@ -209,14 +231,16 @@ export default {
       lastName: '',
       email: '',
       system: 'Standard',
-      desiredWeight: 0, 
+      desiredWeight: 0,
       files: null,
       genderList: ['Male', 'Female', ' - '],
       gender: '',
       feet: 5,
       inches: 4,
+      centimeters: 170,
       feetList: [4, 5, 6, 7],
       inchesList: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      metersList: [...Array(221).keys()].slice(122),
       editMode: false,
       menu: false,
       birthdate: '',
@@ -228,6 +252,12 @@ export default {
     }
   },
   computed: {
+    ...mapActions([
+      'updateNonSavedSelectedSystem',
+    ]),
+    ...mapGetters([
+      'weightUnit', 'heightUnit',
+    ]),
     getUser() {
       return this.$store.getters.getUser;
     },
@@ -244,13 +274,18 @@ export default {
     getSystem() {
       return this.getUser.system.charAt(0).toUpperCase() + this.getUser.system.slice(1).toLowerCase();
     },
+    isUsingLbs() {
+      return this.weightUnit == "lbs";
+    },
+    isUsingFeet() {
+      return this.heightUnit != "m";
+    },
     height() {
-      let feet = Math.floor(this.getUser.height_in_inches / 12);
-      let inches = this.getUser.height_in_inches % 12;
-      this.feet = feet;
-      this.inches = Math.round(inches);
       return `${this.feet}' ${this.inches}"`;
     },
+    heightInCm() {
+      return `${this.centimeters} cm`;
+    }
 
   },
   methods: {
@@ -260,8 +295,18 @@ export default {
       element.name = this.name;
       element.last_name = this.lastName;
       element.email = this.email;
-      element.desired_weight = +this.desiredWeight;
-      element.height_in_inches = +this.feet * 12 + this.inches;
+      if (this.isUsingLbs) {
+        element.desired_weight = +this.desiredWeight;
+      } else {
+        element.desired_weight = (+this.desiredWeight / constants.RATIO_LBS_TO_KG).toFixed(2);
+      }
+
+      if (this.isUsingFeet) {
+        element.height_in_inches = this.convertToInches(this.feet,this.inches); 
+      } else {
+        element.height_in_inches = this.convertToInchesFromCm(this.centimeters); 
+      }
+      this.updateHeight();
       element.gender = this.gender;
       element.birthdate = this.birthdate;
       element.activity_level = +this.activityLevel;
@@ -270,24 +315,68 @@ export default {
       this.handleFileUpload();
       this.$store.dispatch('updateUser', element);
       this.editMode = false;
+
+    },
+    convertToInches(feet,inches) {
+      return feet * constants.INCHES_IN_FEET + inches;
+    },
+    convertToInchesFromCm(cm) {
+      return (cm / constants.RATIO_INCHES_CM).toFixed(2);
+    },
+    convertToCentimeters(feet,inches) {
+      return Math.round(feet * constants.RATIO_FEET_CM + inches * constants.RATIO_INCHES_CM);
     },
     undoEditting() {
       this.editMode = false;
+      this.updateDataFromStore();
+      this.updNonSavedSelectedSystem(this.getSystem);
     },
-    handleFileUpload(){ 
+    handleFileUpload() {
       console.log(this.files);
+    },
+    updNonSavedSelectedSystem(val) {
+      this.$store.dispatch('updateNonSavedSelectedSystem', {
+        system: val
+      });
+      if (this.isUsingLbs) {
+        this.desiredWeight = this.getUser.desired_weight;
+      } else {
+        this.desiredWeight = (this.getUser.desired_weight * constants.RATIO_LBS_TO_KG).toFixed(2);
+      }
+
+    },
+    getHeight() {
+      let feet = Math.floor(this.getUser.height_in_inches / constants.INCHES_IN_FEET);
+      let inches = Math.floor(this.getUser.height_in_inches % constants.INCHES_IN_FEET);
+      this.feet = feet;
+      this.inches = inches;
+      this.centimeters = this.convertToCentimeters(this.feet, this.inches);
+    },
+    updateHeight() { 
+      if (this.isUsingFeet) {
+        this.centimeters = this.convertToCentimeters(this.feet,this.inches); 
+      } else {
+        let total_inches = this.convertToInchesFromCm(this.centimeters)
+        this.feet = Math.floor(total_inches / constants.INCHES_IN_FEET);
+        this.inches = Math.floor(total_inches % constants.INCHES_IN_FEET);
+      }
+    },
+    updateDataFromStore() {
+      this.birthdate = this.birthdateFormatted;
+      this.activityLevel = this.getUser.activity_level;
+      this.name = this.getUser.name;
+      this.lastName = this.getUser.last_name;
+      this.email = this.getUser.email;
+      this.gender = this.getGender;
+      this.system = this.getSystem;
+      this.desiredWeight = this.getUser.desired_weight;
+      this.avatar = this.getUser.avatar;
+      this.getHeight();
     }
   },
   mounted: function () {
-    this.birthdate = this.birthdateFormatted;
-    this.activityLevel = this.getUser.activity_level;
-    this.name = this.getUser.name;
-    this.lastName = this.getUser.last_name;
-    this.email = this.getUser.email;
-    this.gender = this.getGender;
-    this.system = this.getSystem;
-    this.desiredWeight = this.getUser.desired_weight;
-    this.avatar = this.getUser.avatar;
+    this.updateDataFromStore();
+    this.getHeight();
   }
 }
 </script>

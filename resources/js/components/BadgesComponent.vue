@@ -5,7 +5,7 @@
       <badge-component :badge="badge1" :badgeValue="getCurrentWeight" :unit="weightUnit" />
     </v-flex>
     <v-flex xs6 sm6 md6>
-      <badge-component :badge="badge2" :badgeValue="getUser.desired_weight" :unit="weightUnit" />
+      <badge-component :badge="badge2" :badgeValue="desired_weight" :unit="weightUnit" />
     </v-flex>
     <v-flex xs6 sm6 md6>
       <badge-component :badge="badge3" :badgeValue="healthyBMIRange" :unit="weightUnit" />
@@ -24,9 +24,12 @@
 </template>
 
 <script>
+import * as constants from '../constants';
+
 import {
   mapGetters
 } from 'vuex';
+
 import BadgeComponent from './BadgeComponent';
 
 export default {
@@ -36,15 +39,31 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getCurrentWeight', 'getUser','getAge'
+      'getCurrentWeight', 'getCurrentWeightInLbs','getCurrentWeightInKg', 'getUser', 'getAge', 'weightUnit', 'heightUnit',
     ]),
+    desired_weight() {
+      let desired_weight = 0;
+      if (this.weightUnit == "lbs") {
+        desired_weight = this.getUser.desired_weight;
+      } else {  
+        desired_weight = this.getUser.desired_weight * constants.RATIO_LBS_TO_KG;
+      }
+      return Math.round(desired_weight);
+    },
     idealWeight() {
       let lemmens_equation = this.kgToPounds(22 * this.inchesToMeters(this.getUser.height_in_inches) * this.inchesToMeters(this.getUser.height_in_inches));
+      if (this.weightUnit != "lbs") {
+        lemmens_equation = lemmens_equation * constants.RATIO_LBS_TO_KG;
+      }
       return lemmens_equation.toFixed(2);
     },
     healthyBMIRange() {
       let bmi_formula_min = (18.5 / 703) * this.getUser.height_in_inches * this.getUser.height_in_inches;
       let bmi_formula_max = (24.9 / 703) * this.getUser.height_in_inches * this.getUser.height_in_inches;
+      if (this.weightUnit != "lbs") {
+        bmi_formula_min = bmi_formula_min * constants.RATIO_LBS_TO_KG;
+        bmi_formula_max = bmi_formula_max * constants.RATIO_LBS_TO_KG;
+      }
       let bmi_formula_min_rounded = bmi_formula_min.toFixed(0);
       let bmi_formula_max_rounded = bmi_formula_max.toFixed(0);
       return bmi_formula_min_rounded + " to " + bmi_formula_max_rounded;
@@ -52,21 +71,20 @@ export default {
     caloriesNeeded() {
       let totalDailyNeeds = 0;
       if (this.getUser.gender.toLowerCase() == "female") {
-        const bmr = 655 + (4.3 * this.getCurrentWeight) + (4.7 * this.getUser.height_in_inches) - (4.7 * this.getAge);
+        const bmr = 655 + (4.3 * this.getCurrentWeightInLbs) + (4.7 * this.getUser.height_in_inches) - (4.7 * this.getAge);
         totalDailyNeeds = bmr * this.getUser.activity_level / 100 + bmr;
       } else {
-        const bmr = 66 + (6.3 * this.getCurrentWeight) + (12.9 * this.getUser.height_in_inches) - (6.8 * this.getAge);
+        const bmr = 66 + (6.3 * this.getCurrentWeightInLbs) + (12.9 * this.getUser.height_in_inches) - (6.8 * this.getAge);
         totalDailyNeeds = bmr * this.getUser.activity_level / 100 + bmr;
-      } 
+      }
       return Math.round(totalDailyNeeds);
     },
-    caloriesToLoseOnePound() { 
+    caloriesToLoseOnePound() {
       return this.caloriesNeeded - 500;
     }
   },
   data() {
     return {
-      weightUnit: 'lbs',
       calorieUnit: 'calories',
       badge1: {
         text: "Current Weight",

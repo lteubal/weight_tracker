@@ -11,7 +11,7 @@
           <v-container>
             <v-row>
               <v-col cols="12" sm="6" md="4">
-                <v-text-field v-model="newWeightValueToCreate" :rules="rules" prepend-icon="get_app" class="title font-weight-bold" suffix="lbs" label="Weight" @keypress="allowOnlyNumbers"></v-text-field>
+                <v-text-field v-model="newWeightValueToCreate" :rules="rules" prepend-icon="get_app" class="title font-weight-bold" :suffix="weightUnit" label="Weight" @keypress="allowOnlyNumbers"></v-text-field>
 
                 <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="newDateToCreate" transition="scale-transition" offset-y min-width="290px">
                   <template v-slot:activator="{ on }">
@@ -69,7 +69,7 @@
   <v-card color="grey lighten-5" light text hover>
     <v-card-text primary-title>
       <v-row>
-        <v-col sm="3" md="3"> 
+        <v-col sm="3" md="3">
           <v-select :items="entriesPerPageList" v-model="weightsPerPage" label="Entries per page"></v-select>
         </v-col>
         <v-col sm="9" md="9" class="mt-4">
@@ -81,9 +81,9 @@
         <v-timeline-item v-for="element in getWeightsPaginated" :icon="element.icon" :key="element.id" right class="mb-4" :color="element.colorBack" small>
           <v-row justify="space-between">
             <v-col cols="8">
-              <v-text-field v-if="isEditing(element.id)" v-model="elementValue" :rules="rules" :color="element.colorBack" suffix="lbs" class="headline font-weight-bold" hint="Weight" @keypress="allowOnlyNumbers" :value="element.weight"></v-text-field>
-              <span v-else :class="element.color" class="headline font-weight-bold text--darken-4">{{ element.weight}}</span>
-              <span v-if="isNotEditing(element.id)" class="title darkgray--text">lbs</span>
+              <v-text-field v-if="isEditing(element.id)" v-model="elementValue" :rules="rules" :color="element.colorBack" :suffix="weightUnit" class="headline font-weight-bold" hint="Weight" @keypress="allowOnlyNumbers" :value="convertToWeightUnit(element.weight)"></v-text-field>
+              <span v-else :class="element.color" class="headline font-weight-bold text--darken-4">{{ convertToWeightUnit(element.weight)}}</span>
+              <span v-if="isNotEditing(element.id)" class="title darkgray--text">{{ weightUnit }}</span>
             </v-col>
             <v-col v-if="isEditing(element.id)" class="text-right" cols="2">
               <v-btn x-small text>
@@ -100,7 +100,7 @@
             <v-col v-if="isNotEditing(element.id)" class="text-right" cols="2">
               <v-btn x-small text>
                 <v-btn x-small icon color="black">
-                  <v-icon @click="editWeight(element.id, element.weight)" small left class="mx-1" title="Edit">edit</v-icon>
+                  <v-icon @click="editWeight(element.id, convertToWeightUnit(element.weight))" small left class="mx-1" title="Edit">edit</v-icon>
                 </v-btn>
               </v-btn>
             </v-col>
@@ -125,9 +125,13 @@
 </template>
 
 <script>
+
+import * as constants from '../constants';
+
 import {
   mapGetters
 } from 'vuex';
+
 export default {
   name: "TimelineComponent",
   data: () => ({
@@ -150,12 +154,12 @@ export default {
     elementValue: 0,
     rules: [
       value => !!value || 'Required.',
-      value => value <= 999 || 'Max 999 lbs'
+      value => value <= 999 || 'Max 999 '
     ],
   }),
   computed: {
     ...mapGetters([
-      'getWeights', 'hasWeights', 'getNextWeightId'
+      'getWeights', 'hasWeights', 'getNextWeightId', 'weightUnit', 'heightUnit',
     ]),
     getUser() {
       return this.$store.getters.getUser;
@@ -176,10 +180,13 @@ export default {
     createWeight() {
       let element = {};
       element.weight = +this.newWeightValueToCreate;
-      element.weight = element.weight.toFixed(2);
       element.date = this.newDateToCreate;
       element.userId = this.getUser.id;
       element.id = this.getNextWeightId;
+      if (this.weightUnit != "lbs") {
+        element.weight = element.weight / constants.RATIO_LBS_TO_KG;
+      }
+      element.weight = element.weight.toFixed(2);
       this.$store.dispatch('addWeight', element);
       this.newWeightValueToCreate = 0;
       this.newDateToCreate = new Date().toISOString().substr(0, 10);
@@ -193,6 +200,9 @@ export default {
       let element = {};
       element.id = this.editWeightId;
       element.weight = +this.elementValue;
+      if (this.weightUnit != "lbs") {
+        element.weight = element.weight / constants.RATIO_LBS_TO_KG;
+      }
       element.weight = element.weight.toFixed(2)
       this.$store.dispatch('updateWeight', element);
       this.editWeight(-1);
@@ -211,6 +221,13 @@ export default {
     isNotEditing(id) {
       return !this.isEditing(id);
     },
+    convertToWeightUnit(val) {
+      if (this.weightUnit == "lbs") {
+        return val;
+      } else {
+        return (val * constants.RATIO_LBS_TO_KG).toFixed(2);
+      }
+    }
   }
 }
 </script>

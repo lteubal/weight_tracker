@@ -215,8 +215,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-/* harmony import */ var _BadgeComponent__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BadgeComponent */ "./resources/js/components/BadgeComponent.vue");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../constants */ "./resources/js/constants.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _BadgeComponent__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BadgeComponent */ "./resources/js/components/BadgeComponent.vue");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -250,19 +251,42 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "BadgesComponent",
   components: {
-    BadgeComponent: _BadgeComponent__WEBPACK_IMPORTED_MODULE_1__["default"]
+    BadgeComponent: _BadgeComponent__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['getCurrentWeight', 'getUser', 'getAge']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])(['getCurrentWeight', 'getCurrentWeightInLbs', 'getCurrentWeightInKg', 'getUser', 'getAge', 'weightUnit', 'heightUnit']), {
+    desired_weight: function desired_weight() {
+      var desired_weight = 0;
+
+      if (this.weightUnit == "lbs") {
+        desired_weight = this.getUser.desired_weight;
+      } else {
+        desired_weight = this.getUser.desired_weight * _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_LBS_TO_KG"];
+      }
+
+      return Math.round(desired_weight);
+    },
     idealWeight: function idealWeight() {
       var lemmens_equation = this.kgToPounds(22 * this.inchesToMeters(this.getUser.height_in_inches) * this.inchesToMeters(this.getUser.height_in_inches));
+
+      if (this.weightUnit != "lbs") {
+        lemmens_equation = lemmens_equation * _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_LBS_TO_KG"];
+      }
+
       return lemmens_equation.toFixed(2);
     },
     healthyBMIRange: function healthyBMIRange() {
       var bmi_formula_min = 18.5 / 703 * this.getUser.height_in_inches * this.getUser.height_in_inches;
       var bmi_formula_max = 24.9 / 703 * this.getUser.height_in_inches * this.getUser.height_in_inches;
+
+      if (this.weightUnit != "lbs") {
+        bmi_formula_min = bmi_formula_min * _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_LBS_TO_KG"];
+        bmi_formula_max = bmi_formula_max * _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_LBS_TO_KG"];
+      }
+
       var bmi_formula_min_rounded = bmi_formula_min.toFixed(0);
       var bmi_formula_max_rounded = bmi_formula_max.toFixed(0);
       return bmi_formula_min_rounded + " to " + bmi_formula_max_rounded;
@@ -271,10 +295,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var totalDailyNeeds = 0;
 
       if (this.getUser.gender.toLowerCase() == "female") {
-        var bmr = 655 + 4.3 * this.getCurrentWeight + 4.7 * this.getUser.height_in_inches - 4.7 * this.getAge;
+        var bmr = 655 + 4.3 * this.getCurrentWeightInLbs + 4.7 * this.getUser.height_in_inches - 4.7 * this.getAge;
         totalDailyNeeds = bmr * this.getUser.activity_level / 100 + bmr;
       } else {
-        var _bmr = 66 + 6.3 * this.getCurrentWeight + 12.9 * this.getUser.height_in_inches - 6.8 * this.getAge;
+        var _bmr = 66 + 6.3 * this.getCurrentWeightInLbs + 12.9 * this.getUser.height_in_inches - 6.8 * this.getAge;
 
         totalDailyNeeds = _bmr * this.getUser.activity_level / 100 + _bmr;
       }
@@ -287,7 +311,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   }),
   data: function data() {
     return {
-      weightUnit: 'lbs',
       calorieUnit: 'calories',
       badge1: {
         text: "Current Weight",
@@ -348,7 +371,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../constants */ "./resources/js/constants.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -374,9 +398,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      wUnit: 'lbs',
       width: 2,
       radius: 10,
       padding: 18,
@@ -395,9 +421,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     this.updateChartValues();
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['getWeights'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])(['getWeights', 'weightUnit', 'heightUnit'])),
   watch: {
     getWeights: function getWeights() {
+      this.updateChartValues();
+    },
+    weightUnit: function weightUnit() {
       this.updateChartValues();
     }
   },
@@ -405,6 +434,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     updateChartValues: function updateChartValues() {
       var val = [];
       var lab = [];
+      var entryWeight = '';
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -415,11 +445,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               idx = _step$value[0],
               entry = _step$value[1];
 
-          val.push(+entry.weight);
+          if (this.weightUnit == "lbs") {
+            entryWeight = entry.weight;
+          } else {
+            entryWeight = (entry.weight * _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_LBS_TO_KG"]).toFixed(2);
+          }
+
+          val.push(+entryWeight);
 
           if (idx == 0 || idx == Object.values(this.$store.getters.getWeights).length - 1) {
             var FormattedDate = new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US');
-            lab.push(FormattedDate + " - " + entry.weight + " lbs");
+            lab.push(FormattedDate + " - " + entryWeight + " " + this.weightUnit);
           } else {
             lab.push(" ");
           }
@@ -612,7 +648,21 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../constants */ "./resources/js/constants.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 //
 //
@@ -815,6 +865,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "PersonalInfoComponent",
   data: function data() {
@@ -832,13 +899,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       gender: '',
       feet: 5,
       inches: 4,
+      centimeters: 170,
       feetList: [4, 5, 6, 7],
-      inchesList: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+      inchesList: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      metersList: _toConsumableArray(Array(221).keys()).slice(122)
     }, _defineProperty(_ref, "editMode", false), _defineProperty(_ref, "menu", false), _defineProperty(_ref, "birthdate", ''), _defineProperty(_ref, "activityLevel", 10), _defineProperty(_ref, "avatar", ''), _defineProperty(_ref, "rulesAvatar", [function (value) {
       return !value || value.size < 2000000 || 'Avatar size should be less than 2 MB!';
     }]), _ref;
   },
-  computed: {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(['updateNonSavedSelectedSystem']), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])(['weightUnit', 'heightUnit']), {
     getUser: function getUser() {
       return this.$store.getters.getUser;
     },
@@ -855,14 +924,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     getSystem: function getSystem() {
       return this.getUser.system.charAt(0).toUpperCase() + this.getUser.system.slice(1).toLowerCase();
     },
+    isUsingLbs: function isUsingLbs() {
+      return this.weightUnit == "lbs";
+    },
+    isUsingFeet: function isUsingFeet() {
+      return this.heightUnit != "m";
+    },
     height: function height() {
-      var feet = Math.floor(this.getUser.height_in_inches / 12);
-      var inches = this.getUser.height_in_inches % 12;
-      this.feet = feet;
-      this.inches = Math.round(inches);
       return "".concat(this.feet, "' ").concat(this.inches, "\"");
+    },
+    heightInCm: function heightInCm() {
+      return "".concat(this.centimeters, " cm");
     }
-  },
+  }),
   methods: {
     updateUser: function updateUser() {
       var element = {};
@@ -870,8 +944,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       element.name = this.name;
       element.last_name = this.lastName;
       element.email = this.email;
-      element.desired_weight = +this.desiredWeight;
-      element.height_in_inches = +this.feet * 12 + this.inches;
+
+      if (this.isUsingLbs) {
+        element.desired_weight = +this.desiredWeight;
+      } else {
+        element.desired_weight = (+this.desiredWeight / _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_LBS_TO_KG"]).toFixed(2);
+      }
+
+      if (this.isUsingFeet) {
+        element.height_in_inches = this.convertToInches(this.feet, this.inches);
+      } else {
+        element.height_in_inches = this.convertToInchesFromCm(this.centimeters);
+      }
+
+      this.updateHeight();
       element.gender = this.gender;
       element.birthdate = this.birthdate;
       element.activity_level = +this.activityLevel;
@@ -881,23 +967,66 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.$store.dispatch('updateUser', element);
       this.editMode = false;
     },
+    convertToInches: function convertToInches(feet, inches) {
+      return feet * _constants__WEBPACK_IMPORTED_MODULE_0__["INCHES_IN_FEET"] + inches;
+    },
+    convertToInchesFromCm: function convertToInchesFromCm(cm) {
+      return (cm / _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_INCHES_CM"]).toFixed(2);
+    },
+    convertToCentimeters: function convertToCentimeters(feet, inches) {
+      return Math.round(feet * _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_FEET_CM"] + inches * _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_INCHES_CM"]);
+    },
     undoEditting: function undoEditting() {
       this.editMode = false;
+      this.updateDataFromStore();
+      this.updNonSavedSelectedSystem(this.getSystem);
     },
     handleFileUpload: function handleFileUpload() {
       console.log(this.files);
+    },
+    updNonSavedSelectedSystem: function updNonSavedSelectedSystem(val) {
+      this.$store.dispatch('updateNonSavedSelectedSystem', {
+        system: val
+      });
+
+      if (this.isUsingLbs) {
+        this.desiredWeight = this.getUser.desired_weight;
+      } else {
+        this.desiredWeight = (this.getUser.desired_weight * _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_LBS_TO_KG"]).toFixed(2);
+      }
+    },
+    getHeight: function getHeight() {
+      var feet = Math.floor(this.getUser.height_in_inches / _constants__WEBPACK_IMPORTED_MODULE_0__["INCHES_IN_FEET"]);
+      var inches = Math.floor(this.getUser.height_in_inches % _constants__WEBPACK_IMPORTED_MODULE_0__["INCHES_IN_FEET"]);
+      this.feet = feet;
+      this.inches = inches;
+      this.centimeters = this.convertToCentimeters(this.feet, this.inches);
+    },
+    updateHeight: function updateHeight() {
+      if (this.isUsingFeet) {
+        this.centimeters = this.convertToCentimeters(this.feet, this.inches);
+      } else {
+        var total_inches = this.convertToInchesFromCm(this.centimeters);
+        this.feet = Math.floor(total_inches / _constants__WEBPACK_IMPORTED_MODULE_0__["INCHES_IN_FEET"]);
+        this.inches = Math.floor(total_inches % _constants__WEBPACK_IMPORTED_MODULE_0__["INCHES_IN_FEET"]);
+      }
+    },
+    updateDataFromStore: function updateDataFromStore() {
+      this.birthdate = this.birthdateFormatted;
+      this.activityLevel = this.getUser.activity_level;
+      this.name = this.getUser.name;
+      this.lastName = this.getUser.last_name;
+      this.email = this.getUser.email;
+      this.gender = this.getGender;
+      this.system = this.getSystem;
+      this.desiredWeight = this.getUser.desired_weight;
+      this.avatar = this.getUser.avatar;
+      this.getHeight();
     }
   },
   mounted: function mounted() {
-    this.birthdate = this.birthdateFormatted;
-    this.activityLevel = this.getUser.activity_level;
-    this.name = this.getUser.name;
-    this.lastName = this.getUser.last_name;
-    this.email = this.getUser.email;
-    this.gender = this.getGender;
-    this.system = this.getSystem;
-    this.desiredWeight = this.getUser.desired_weight;
-    this.avatar = this.getUser.avatar;
+    this.updateDataFromStore();
+    this.getHeight();
   }
 });
 
@@ -912,7 +1041,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../constants */ "./resources/js/constants.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -1046,6 +1176,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "TimelineComponent",
   data: function data() {
@@ -1070,11 +1201,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       rules: [function (value) {
         return !!value || 'Required.';
       }, function (value) {
-        return value <= 999 || 'Max 999 lbs';
+        return value <= 999 || 'Max 999 ';
       }]
     };
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['getWeights', 'hasWeights', 'getNextWeightId']), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])(['getWeights', 'hasWeights', 'getNextWeightId', 'weightUnit', 'heightUnit']), {
     getUser: function getUser() {
       return this.$store.getters.getUser;
     },
@@ -1094,10 +1225,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     createWeight: function createWeight() {
       var element = {};
       element.weight = +this.newWeightValueToCreate;
-      element.weight = element.weight.toFixed(2);
       element.date = this.newDateToCreate;
       element.userId = this.getUser.id;
       element.id = this.getNextWeightId;
+
+      if (this.weightUnit != "lbs") {
+        element.weight = element.weight / _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_LBS_TO_KG"];
+      }
+
+      element.weight = element.weight.toFixed(2);
       this.$store.dispatch('addWeight', element);
       this.newWeightValueToCreate = 0;
       this.newDateToCreate = new Date().toISOString().substr(0, 10);
@@ -1111,6 +1247,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var element = {};
       element.id = this.editWeightId;
       element.weight = +this.elementValue;
+
+      if (this.weightUnit != "lbs") {
+        element.weight = element.weight / _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_LBS_TO_KG"];
+      }
+
       element.weight = element.weight.toFixed(2);
       this.$store.dispatch('updateWeight', element);
       this.editWeight(-1);
@@ -1128,6 +1269,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     isNotEditing: function isNotEditing(id) {
       return !this.isEditing(id);
+    },
+    convertToWeightUnit: function convertToWeightUnit(val) {
+      if (this.weightUnit == "lbs") {
+        return val;
+      } else {
+        return (val * _constants__WEBPACK_IMPORTED_MODULE_0__["RATIO_LBS_TO_KG"]).toFixed(2);
+      }
     }
   }
 });
@@ -3466,7 +3614,7 @@ var render = function() {
               _c("badge-component", {
                 attrs: {
                   badge: _vm.badge2,
-                  badgeValue: _vm.getUser.desired_weight,
+                  badgeValue: _vm.desired_weight,
                   unit: _vm.weightUnit
                 }
               })
@@ -4120,9 +4268,17 @@ var render = function() {
                         _vm._v(" "),
                         _c("br"),
                         _vm._v(" "),
-                        _c("div", { staticClass: "grey--text info-text" }, [
-                          _vm._v("Height: " + _vm._s(_vm.height))
-                        ]),
+                        _vm.isUsingFeet
+                          ? _c("div", { staticClass: "grey--text info-text" }, [
+                              _vm._v("Height: " + _vm._s(_vm.height))
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        !_vm.isUsingFeet
+                          ? _c("div", { staticClass: "grey--text info-text" }, [
+                              _vm._v("Height: " + _vm._s(_vm.heightInCm))
+                            ])
+                          : _vm._e(),
                         _vm._v(" "),
                         _c("br"),
                         _vm._v(" "),
@@ -4166,7 +4322,12 @@ var render = function() {
                         _c("br"),
                         _vm._v(" "),
                         _c("div", { staticClass: "grey--text info-text" }, [
-                          _vm._v("Desired Weight: " + _vm._s(_vm.desiredWeight))
+                          _vm._v(
+                            "Desired Weight: " +
+                              _vm._s(_vm.desiredWeight) +
+                              " " +
+                              _vm._s(_vm.weightUnit)
+                          )
                         ])
                       ]),
                       _vm._v(" "),
@@ -4685,77 +4846,145 @@ var render = function() {
                           _vm._v(" "),
                           _c("br"),
                           _vm._v(" "),
-                          _c(
-                            "div",
-                            {
-                              staticClass: "grey--text info-text",
-                              staticStyle: { "margin-top": "16px" }
-                            },
-                            [
-                              _vm._v("Height:\r\n            "),
-                              _c(
+                          _vm.isUsingFeet
+                            ? _c(
                                 "div",
-                                { staticClass: "grey--text info-text" },
+                                {
+                                  staticClass: "grey--text info-text",
+                                  staticStyle: { "margin-top": "16px" }
+                                },
                                 [
+                                  _vm._v("Height:\r\n            "),
                                   _c(
-                                    "v-layout",
-                                    { attrs: { row: "" } },
+                                    "div",
+                                    { staticClass: "grey--text info-text" },
                                     [
-                                      _c("v-flex", { attrs: { xs1: "" } }),
-                                      _vm._v(" "),
                                       _c(
-                                        "v-flex",
-                                        { attrs: { xs4: "" } },
+                                        "v-layout",
+                                        { attrs: { row: "" } },
                                         [
-                                          _c("v-select", {
-                                            attrs: {
-                                              items: _vm.feetList,
-                                              label: "Feet"
-                                            },
-                                            model: {
-                                              value: _vm.feet,
-                                              callback: function($$v) {
-                                                _vm.feet = $$v
-                                              },
-                                              expression: "feet"
-                                            }
-                                          })
+                                          _c("v-flex", { attrs: { xs1: "" } }),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-flex",
+                                            { attrs: { xs4: "" } },
+                                            [
+                                              _c("v-select", {
+                                                attrs: {
+                                                  items: _vm.feetList,
+                                                  label: "Feet"
+                                                },
+                                                on: {
+                                                  change: function($event) {
+                                                    return _vm.updateHeight()
+                                                  }
+                                                },
+                                                model: {
+                                                  value: _vm.feet,
+                                                  callback: function($$v) {
+                                                    _vm.feet = $$v
+                                                  },
+                                                  expression: "feet"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c("v-flex", { attrs: { xs2: "" } }),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-flex",
+                                            { attrs: { xs4: "" } },
+                                            [
+                                              _c("v-select", {
+                                                attrs: {
+                                                  items: _vm.inchesList,
+                                                  label: "Inches"
+                                                },
+                                                on: {
+                                                  change: function($event) {
+                                                    return _vm.updateHeight()
+                                                  }
+                                                },
+                                                model: {
+                                                  value: _vm.inches,
+                                                  callback: function($$v) {
+                                                    _vm.inches = $$v
+                                                  },
+                                                  expression: "inches"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c("v-flex", { attrs: { xs1: "" } })
                                         ],
                                         1
-                                      ),
-                                      _vm._v(" "),
-                                      _c("v-flex", { attrs: { xs2: "" } }),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-flex",
-                                        { attrs: { xs4: "" } },
-                                        [
-                                          _c("v-select", {
-                                            attrs: {
-                                              items: _vm.inchesList,
-                                              label: "Inches"
-                                            },
-                                            model: {
-                                              value: _vm.inches,
-                                              callback: function($$v) {
-                                                _vm.inches = $$v
-                                              },
-                                              expression: "inches"
-                                            }
-                                          })
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _c("v-flex", { attrs: { xs1: "" } })
+                                      )
                                     ],
                                     1
                                   )
-                                ],
-                                1
+                                ]
                               )
-                            ]
-                          ),
+                            : _vm._e(),
+                          _vm._v(" "),
+                          !_vm.isUsingFeet
+                            ? _c(
+                                "div",
+                                {
+                                  staticClass: "grey--text info-text",
+                                  staticStyle: { "margin-top": "16px" }
+                                },
+                                [
+                                  _vm._v("Height:\r\n            "),
+                                  _c(
+                                    "div",
+                                    { staticClass: "grey--text info-text" },
+                                    [
+                                      _c(
+                                        "v-layout",
+                                        { attrs: { row: "" } },
+                                        [
+                                          _c("v-flex", { attrs: { xs1: "" } }),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-flex",
+                                            { attrs: { xs9: "" } },
+                                            [
+                                              _c("v-select", {
+                                                attrs: {
+                                                  items: _vm.metersList,
+                                                  label: "Cm"
+                                                },
+                                                on: {
+                                                  change: function($event) {
+                                                    return _vm.updateHeight()
+                                                  }
+                                                },
+                                                model: {
+                                                  value: _vm.centimeters,
+                                                  callback: function($$v) {
+                                                    _vm.centimeters = $$v
+                                                  },
+                                                  expression: "centimeters"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c("v-flex", { attrs: { xs2: "" } })
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ]
+                              )
+                            : _vm._e(),
                           _vm._v(" "),
                           _c("br"),
                           _vm._v(" "),
@@ -4803,6 +5032,15 @@ var render = function() {
                                                       attrs: {
                                                         label: "Standard",
                                                         value: "Standard"
+                                                      },
+                                                      on: {
+                                                        change: function(
+                                                          $event
+                                                        ) {
+                                                          return _vm.updNonSavedSelectedSystem(
+                                                            "Standard"
+                                                          )
+                                                        }
                                                       }
                                                     }),
                                                     _vm._v(" "),
@@ -4810,6 +5048,15 @@ var render = function() {
                                                       attrs: {
                                                         label: "Metric",
                                                         value: "Metric"
+                                                      },
+                                                      on: {
+                                                        change: function(
+                                                          $event
+                                                        ) {
+                                                          return _vm.updNonSavedSelectedSystem(
+                                                            "Metric"
+                                                          )
+                                                        }
                                                       }
                                                     })
                                                   ],
@@ -4896,7 +5143,7 @@ var render = function() {
                           [
                             _vm._v("Desired Weight\r\n            "),
                             _c("v-text-field", {
-                              attrs: { suffix: "lbs" },
+                              attrs: { suffix: _vm.weightUnit },
                               model: {
                                 value: _vm.desiredWeight,
                                 callback: function($$v) {
@@ -4994,7 +5241,7 @@ var render = function() {
                                     attrs: {
                                       rules: _vm.rules,
                                       "prepend-icon": "get_app",
-                                      suffix: "lbs",
+                                      suffix: _vm.weightUnit,
                                       label: "Weight"
                                     },
                                     on: { keypress: _vm.allowOnlyNumbers },
@@ -5453,9 +5700,11 @@ var render = function() {
                                         attrs: {
                                           rules: _vm.rules,
                                           color: element.colorBack,
-                                          suffix: "lbs",
+                                          suffix: _vm.weightUnit,
                                           hint: "Weight",
-                                          value: element.weight
+                                          value: _vm.convertToWeightUnit(
+                                            element.weight
+                                          )
                                         },
                                         on: { keypress: _vm.allowOnlyNumbers },
                                         model: {
@@ -5473,14 +5722,22 @@ var render = function() {
                                             "headline font-weight-bold text--darken-4",
                                           class: element.color
                                         },
-                                        [_vm._v(_vm._s(element.weight))]
+                                        [
+                                          _vm._v(
+                                            _vm._s(
+                                              _vm.convertToWeightUnit(
+                                                element.weight
+                                              )
+                                            )
+                                          )
+                                        ]
                                       ),
                                   _vm._v(" "),
                                   _vm.isNotEditing(element.id)
                                     ? _c(
                                         "span",
                                         { staticClass: "title darkgray--text" },
-                                        [_vm._v("lbs")]
+                                        [_vm._v(_vm._s(_vm.weightUnit))]
                                       )
                                     : _vm._e()
                                 ],
@@ -5613,9 +5870,11 @@ var render = function() {
                                                   },
                                                   on: {
                                                     click: function($event) {
-                                                      return _vm.editWeight(
+                                                      _vm.editWeight(
                                                         element.id,
-                                                        element.weight
+                                                        _vm.convertToWeightUnit(
+                                                          element.weight
+                                                        )
                                                       )
                                                     }
                                                   }
@@ -56063,6 +56322,26 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/constants.js":
+/*!***********************************!*\
+  !*** ./resources/js/constants.js ***!
+  \***********************************/
+/*! exports provided: RATIO_LBS_TO_KG, RATIO_FEET_CM, RATIO_INCHES_CM, INCHES_IN_FEET */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RATIO_LBS_TO_KG", function() { return RATIO_LBS_TO_KG; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RATIO_FEET_CM", function() { return RATIO_FEET_CM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RATIO_INCHES_CM", function() { return RATIO_INCHES_CM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "INCHES_IN_FEET", function() { return INCHES_IN_FEET; });
+var RATIO_LBS_TO_KG = 0.453592;
+var RATIO_FEET_CM = 30.48;
+var RATIO_INCHES_CM = 2.54;
+var INCHES_IN_FEET = 12;
+
+/***/ }),
+
 /***/ "./resources/js/store.js":
 /*!*******************************!*\
   !*** ./resources/js/store.js ***!
@@ -56075,11 +56354,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./constants */ "./resources/js/constants.js");
+
 
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__["default"]);
 var state = {
   current_bmi: 0,
+  nonSavedSelectedSystem: 'Standard',
   weights: [{
     id: 11,
     userId: 1,
@@ -56170,6 +56452,9 @@ var mutations = {
   },
   UPDATE_USER: function UPDATE_USER(state, user) {
     state.user = user;
+  },
+  UPDATE_NON_SAVED_SELECTED_SYSTEM: function UPDATE_NON_SAVED_SELECTED_SYSTEM(state, payload) {
+    state.nonSavedSelectedSystem = payload.system;
   }
 };
 var actions = {
@@ -56184,6 +56469,9 @@ var actions = {
   },
   updateUser: function updateUser(context, user) {
     context.commit("UPDATE_USER", user);
+  },
+  updateNonSavedSelectedSystem: function updateNonSavedSelectedSystem(context, system) {
+    context.commit("UPDATE_NON_SAVED_SELECTED_SYSTEM", system);
   }
 };
 var getters = {
@@ -56226,11 +56514,17 @@ var getters = {
   getUser: function getUser(state) {
     return state.user;
   },
-  getCurrentWeight: function getCurrentWeight(state) {
+  getCurrentWeightInLbs: function getCurrentWeightInLbs(state) {
     return state.weights[0].weight;
   },
+  getCurrentWeightInKg: function getCurrentWeightInKg(state) {
+    return (state.weights[0].weight * _constants__WEBPACK_IMPORTED_MODULE_2__["RATIO_LBS_TO_KG"]).toFixed(2);
+  },
+  getCurrentWeight: function getCurrentWeight(state, getters) {
+    return state.nonSavedSelectedSystem == "Standard" ? getters.getCurrentWeightInLbs : getters.getCurrentWeightInKg;
+  },
   getCurrentBMI: function getCurrentBMI(state, getters) {
-    var bmi = 703 * getters.getCurrentWeight / (getters.getUser.height_in_inches * getters.getUser.height_in_inches);
+    var bmi = 703 * getters.getCurrentWeightInLbs / (getters.getUser.height_in_inches * getters.getUser.height_in_inches);
     return bmi.toFixed(1);
   },
   getAge: function getAge() {
@@ -56244,6 +56538,12 @@ var getters = {
     }
 
     return age;
+  },
+  weightUnit: function weightUnit(state) {
+    return state.nonSavedSelectedSystem == 'Standard' ? "lbs" : "kg";
+  },
+  heightUnit: function heightUnit(state) {
+    return state.nonSavedSelectedSystem == 'Standard' ? "" : "m";
   },
   getCurrentBMILevel: function getCurrentBMILevel(state, getters) {
     var bmi = getters.getCurrentBMI;

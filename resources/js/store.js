@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import * as constants from './constants';
 
 Vue.use(Vuex);
 
 const state = {
   current_bmi: 0,
+  nonSavedSelectedSystem: 'Standard',
   weights: [{
       id: 11,
       userId: 1,
@@ -104,6 +106,9 @@ const mutations = {
   },
   UPDATE_USER(state, user) {
     state.user = user;
+  },
+  UPDATE_NON_SAVED_SELECTED_SYSTEM(state, payload) {
+    state.nonSavedSelectedSystem = payload.system;
   }
 };
 
@@ -119,6 +124,9 @@ const actions = {
   },
   updateUser(context, user) {
     context.commit("UPDATE_USER", user);
+  },
+  updateNonSavedSelectedSystem(context, system) {
+    context.commit("UPDATE_NON_SAVED_SELECTED_SYSTEM", system);
   }
 };
 
@@ -144,6 +152,8 @@ const getters = {
       return weight;
     });
     weights[weights.length - 1].icon = 'star';
+
+
     return weights.sort((a, b) => {
       return new Date(b.date) - new Date(a.date)
     });
@@ -162,11 +172,17 @@ const getters = {
   getUser(state) {
     return state.user;
   },
-  getCurrentWeight(state) {
+  getCurrentWeightInLbs(state) {
     return state.weights[0].weight;
   },
+  getCurrentWeightInKg(state) {
+    return (state.weights[0].weight * constants.RATIO_LBS_TO_KG).toFixed(2);
+  },
+  getCurrentWeight(state, getters) {
+    return state.nonSavedSelectedSystem == "Standard" ? getters.getCurrentWeightInLbs : getters.getCurrentWeightInKg;
+  },
   getCurrentBMI(state, getters) {
-    let bmi = 703 * getters.getCurrentWeight / (getters.getUser.height_in_inches * getters.getUser.height_in_inches);
+    let bmi = 703 * getters.getCurrentWeightInLbs / (getters.getUser.height_in_inches * getters.getUser.height_in_inches);
     return bmi.toFixed(1);
   },
   getAge() {
@@ -178,6 +194,12 @@ const getters = {
       age--;
     }
     return age;
+  },
+  weightUnit(state) {
+    return state.nonSavedSelectedSystem == 'Standard' ? "lbs" : "kg";
+  },
+  heightUnit(state) {
+    return state.nonSavedSelectedSystem == 'Standard' ? "" : "m";
   },
   getCurrentBMILevel(state, getters) {
     let bmi = getters.getCurrentBMI;
