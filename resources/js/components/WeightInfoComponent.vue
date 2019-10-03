@@ -1,8 +1,7 @@
 <template>
 <div class="main-weight-info-dashboard" v-bind:class="{'main-weight-info': standAlone}">
   <v-hover v-slot:default="{ hover }" :disabled="false" :value="false">
-    <v-card :elevation="hover ? 6 : 2" class="mx-4 my-0 gauge-card" light>
-
+    <v-card :elevation="hover ? 6 : 2" class="mx-4 my-0 gauge-card" light> 
       <div id="chart">
         <highcharts class="gauge-chart" :options="chartOptions"></highcharts>
       </div>
@@ -154,7 +153,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+@media screen and (max-width: 480px) { 
+  .main-weight-info, .main-weight-info-dashboard {
+    display: none;
+  }
+}
 $colorBack: #eee;
 
 .bmi {
@@ -194,4 +197,6 @@ $colorBack: #eee;
     min-width: 1000px;
   }
 }
+
+
 </style>

@@ -1141,6 +1141,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var FormattedDate = new Date(this.getUser.birthdate + 'T00:00:00').toISOString().substr(0, 10);
       return FormattedDate;
     },
+    birthdateFormattedUSA: function birthdateFormattedUSA() {
+      var FormattedDate = new Date(this.getUser.birthdate + 'T00:00:00').toLocaleDateString('en-US').substr(0, 10);
+      return FormattedDate;
+    },
     getGender: function getGender() {
       return this.getUser.gender.charAt(0).toUpperCase() + this.getUser.gender.slice(1).toLowerCase();
     },
@@ -1572,7 +1576,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "WeightInfoComponent",
@@ -1767,7 +1770,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".aligned-left[data-v-d82b9e3e] {\n  position: relative;\n  left: -60px;\n}\n.main-timeline[data-v-d82b9e3e] {\n  margin-top: 20px;\n  display: flex;\n  justify-content: center;\n  text-align: center;\n}\n.main-timeline .main-card[data-v-d82b9e3e] {\n  min-width: 1000px;\n}\n.darkgray--text[data-v-d82b9e3e] {\n  color: #BDBDBD;\n}\n.v-card__text[data-v-d82b9e3e] {\n  background: #eee;\n}", ""]);
+exports.push([module.i, ".aligned-left[data-v-d82b9e3e] {\n  position: relative;\n  left: -60px;\n}\n.main-timeline[data-v-d82b9e3e] {\n  margin-top: 20px;\n  display: flex;\n  justify-content: center;\n  text-align: center;\n}\n.main-timeline .main-card[data-v-d82b9e3e] {\n  min-width: 1000px;\n}\n.darkgray--text[data-v-d82b9e3e] {\n  color: #BDBDBD;\n}\n.v-card .v-card__text[data-v-d82b9e3e], .v-card__actions[data-v-d82b9e3e], .v-card__title[data-v-d82b9e3e] {\n  background: #eee;\n  background-color: #eee;\n}", ""]);
 
 // exports
 
@@ -1786,7 +1789,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".bmi[data-v-216f46bc] {\n  color: #00897B;\n  font-weight: bold;\n  font-family: Roboto, sans-serif;\n  font-size: 1.8rem;\n}\n.gauge-chart[data-v-216f46bc] {\n  height: 240px;\n  width: 400px;\n  padding-top: 20px;\n  margin: 0px auto;\n}\n.gauge-card[data-v-216f46bc] {\n  padding-top: 20px;\n  text-align: center;\n  display: inline;\n  background: #eee;\n}\n.main-weight-info-dashboard[data-v-216f46bc] {\n  margin-top: 20px;\n  margin-bottom: 20px;\n  background: #eee;\n}\n.main-weight-info[data-v-216f46bc] {\n  margin-top: 20px;\n  display: flex;\n  justify-content: center;\n  text-align: center;\n  background: inherit;\n}\n.main-weight-info .v-card[data-v-216f46bc] {\n  min-width: 1000px;\n}", ""]);
+exports.push([module.i, "@media screen and (max-width: 480px) {\n.main-weight-info[data-v-216f46bc], .main-weight-info-dashboard[data-v-216f46bc] {\n    display: none;\n}\n}\n.bmi[data-v-216f46bc] {\n  color: #00897B;\n  font-weight: bold;\n  font-family: Roboto, sans-serif;\n  font-size: 1.8rem;\n}\n.gauge-chart[data-v-216f46bc] {\n  height: 240px;\n  width: 400px;\n  padding-top: 20px;\n  margin: 0px auto;\n}\n.gauge-card[data-v-216f46bc] {\n  padding-top: 20px;\n  text-align: center;\n  display: inline;\n  background: #eee;\n}\n.main-weight-info-dashboard[data-v-216f46bc] {\n  margin-top: 20px;\n  margin-bottom: 20px;\n  background: #eee;\n}\n.main-weight-info[data-v-216f46bc] {\n  margin-top: 20px;\n  display: flex;\n  justify-content: center;\n  text-align: center;\n  background: inherit;\n}\n.main-weight-info .v-card[data-v-216f46bc] {\n  min-width: 1000px;\n}", ""]);
 
 // exports
 
@@ -3915,7 +3918,7 @@ var render = function() {
             _c(
               "v-card",
               {
-                staticClass: "mx-3 my-3",
+                staticClass: "mx-2 my-3",
                 attrs: {
                   color: _vm.badge.color,
                   light: "",
@@ -4839,7 +4842,9 @@ var render = function() {
                       _vm._v(" "),
                       _c("v-flex", { attrs: { xs5: "" } }, [
                         _c("div", { staticClass: "grey--text info-text" }, [
-                          _vm._v("Birthdate: " + _vm._s(_vm.birthdate))
+                          _vm._v(
+                            "Birthdate: " + _vm._s(_vm.birthdateFormattedUSA)
+                          )
                         ]),
                         _vm._v(" "),
                         _c("br"),
@@ -4922,9 +4927,7 @@ var render = function() {
       _vm.editMode
         ? _c(
             "v-card",
-            {
-              attrs: { color: "grey lighten-5", light: "", text: "", hover: "" }
-            },
+            { attrs: { light: "", text: "", hover: "" } },
             [
               _c(
                 "v-card-text",

@@ -236,6 +236,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .aligned-left {
   position: relative;
   left: -60px;
@@ -256,7 +257,8 @@ export default {
   color: #BDBDBD;
 }
 
-.v-card__text {
+.v-card .v-card__text, .v-card__actions, .v-card__title  {
   background: #eee;
+  background-color: #eee;
 }
 </style>

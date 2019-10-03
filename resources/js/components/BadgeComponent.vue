@@ -1,6 +1,6 @@
 <template>
 <v-hover v-slot:default="{ hover }" :disabled="false" :value="false">
-  <v-card :color="badge.color" light max-width="344" class="mx-3 my-3" :elevation="hover ? 6 : 2">
+  <v-card :color="badge.color" light max-width="344" class="mx-2 my-3" :elevation="hover ? 6 : 2">
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title class="title">

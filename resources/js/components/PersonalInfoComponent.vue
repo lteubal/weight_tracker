@@ -21,7 +21,7 @@
         <v-flex xs1>
         </v-flex>
         <v-flex xs5>
-          <div class="grey--text info-text">Birthdate: {{ birthdate }}</div>
+          <div class="grey--text info-text">Birthdate: {{ birthdateFormattedUSA }}</div>
           <br>
           <div v-if="isUsingFeet" class="grey--text info-text">Height: {{ height }}</div>
           <div v-if="!isUsingFeet" class="grey--text info-text">Height: {{ heightInCm }}</div>
@@ -44,7 +44,7 @@
     </v-card-text>
   </v-card>
 
-  <v-card v-if="editMode" color="grey lighten-5" light text hover>
+  <v-card v-if="editMode"   light text hover>
     <v-card-text primary-title>
       <div class="subtitle-3 text-left">
         <div v-if="avatar">
@@ -269,6 +269,10 @@ export default {
     },
     birthdateFormatted() {
       let FormattedDate = new Date(this.getUser.birthdate + 'T00:00:00').toISOString().substr(0, 10);
+      return FormattedDate;
+    },
+    birthdateFormattedUSA() {
+      let FormattedDate = new Date(this.getUser.birthdate + 'T00:00:00').toLocaleDateString('en-US').substr(0, 10);
       return FormattedDate;
     },
     getGender() {
