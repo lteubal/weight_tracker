@@ -1,6 +1,7 @@
 // require('./bootstrap');
 window.Vue = require('vue');
-import Vuex from 'vuex'
+import Vuex from 'vuex';
+import VueRouter from 'vue-router';
 
 import '@mdi/font/css/materialdesignicons.css';
 
@@ -16,8 +17,46 @@ solidGaugeInit(Highcharts);
 
 Vue.use(Vuetify);
 Vue.use(HighchartsVue);
+Vue.use(VueRouter);
+
+import ChartComponent from './components/ChartComponent';
+import TimelineComponent from './components/TimelineComponent';
+import PersonalInfoComponent from './components/PersonalInfoComponent';
+import DashboardComponent from './components/DashboardComponent';
+import WeightBadgesComponent from './components/WeightBadgesComponent';
 
 Vue.component('main-component', require('./components/MainComponent.vue').default);
+
+const router = new VueRouter({
+  mode: 'history',
+  routes: [{
+      path: '/home',
+      name: 'DashboardComponent',
+      component: DashboardComponent,
+    },
+    {
+      path: '/personal-info',
+      name: 'PersonalInfoComponent',
+      component: PersonalInfoComponent,
+    },
+    {
+      path: '/chart',
+      name: 'ChartComponent',
+      component: ChartComponent
+    },
+    {
+      path: '/timeline',
+      name: 'TimelineComponent',
+      component: TimelineComponent
+    },
+    {
+      path: '/weight-info',
+      name: 'WeightBadgesComponent',
+      component: WeightBadgesComponent
+    },
+  ],
+});
+
 Vue.mixin({
   methods: {
     allowOnlyNumbers($event) {
@@ -54,5 +93,6 @@ const app = new Vue({
   }),
   data: () => ({
     drawer: null
-  })
-})
+  }),
+  router,
+});

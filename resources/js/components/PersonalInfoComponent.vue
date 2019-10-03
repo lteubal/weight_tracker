@@ -1,12 +1,12 @@
 <template>
-<div>
-  <v-card v-if="!editMode" color="grey lighten-5" light text hover>
+<div v-bind:class="{'main-personal': standAlone}">
+  <v-card v-if="!editMode"   light text hover>
     <v-card-title primary-title>
       <div class="subtitle-3 text-left">
         <v-avatar size="55" v-if="avatar">
           <img :src="avatar">
         </v-avatar>
-        <span>{{ fullname }}</span>
+        <span>{{ fullname }}{{ }}</span>
 
         <div class="subtitle-2 grey--text "><span v-if="avatar" class="ml-12"></span>{{ email }}</div>
       </div>
@@ -144,12 +144,12 @@
                 <v-flex xs1>
                 </v-flex>
                 <v-flex xs4>
-                  <v-select v-model="feet"  @change="updateHeight()" :items="feetList" label="Feet"></v-select>
+                  <v-select v-model="feet" @change="updateHeight()" :items="feetList" label="Feet"></v-select>
                 </v-flex>
                 <v-flex xs2>
                 </v-flex>
                 <v-flex xs4>
-                  <v-select v-model="inches"  @change="updateHeight()" :items="inchesList" label="Inches"></v-select>
+                  <v-select v-model="inches" @change="updateHeight()" :items="inchesList" label="Inches"></v-select>
                 </v-flex>
                 <v-flex xs1>
                 </v-flex>
@@ -162,7 +162,7 @@
                 <v-flex xs1>
                 </v-flex>
                 <v-flex xs9>
-                  <v-select v-model="centimeters"  @change="updateHeight()" :items="metersList" label="Cm"></v-select>
+                  <v-select v-model="centimeters" @change="updateHeight()" :items="metersList" label="Cm"></v-select>
                 </v-flex>
                 <v-flex xs2>
                 </v-flex>
@@ -258,6 +258,9 @@ export default {
     ...mapGetters([
       'weightUnit', 'heightUnit',
     ]),
+    standAlone() {
+      return this.$route.path != '/home';
+    },
     getUser() {
       return this.$store.getters.getUser;
     },
@@ -302,9 +305,9 @@ export default {
       }
 
       if (this.isUsingFeet) {
-        element.height_in_inches = this.convertToInches(this.feet,this.inches); 
+        element.height_in_inches = this.convertToInches(this.feet, this.inches);
       } else {
-        element.height_in_inches = this.convertToInchesFromCm(this.centimeters); 
+        element.height_in_inches = this.convertToInchesFromCm(this.centimeters);
       }
       this.updateHeight();
       element.gender = this.gender;
@@ -317,13 +320,13 @@ export default {
       this.editMode = false;
 
     },
-    convertToInches(feet,inches) {
+    convertToInches(feet, inches) {
       return feet * constants.INCHES_IN_FEET + inches;
     },
     convertToInchesFromCm(cm) {
       return (cm / constants.RATIO_INCHES_CM).toFixed(2);
     },
-    convertToCentimeters(feet,inches) {
+    convertToCentimeters(feet, inches) {
       return Math.round(feet * constants.RATIO_FEET_CM + inches * constants.RATIO_INCHES_CM);
     },
     undoEditting() {
@@ -352,9 +355,9 @@ export default {
       this.inches = inches;
       this.centimeters = this.convertToCentimeters(this.feet, this.inches);
     },
-    updateHeight() { 
+    updateHeight() {
       if (this.isUsingFeet) {
-        this.centimeters = this.convertToCentimeters(this.feet,this.inches); 
+        this.centimeters = this.convertToCentimeters(this.feet, this.inches);
       } else {
         let total_inches = this.convertToInchesFromCm(this.centimeters)
         this.feet = Math.floor(total_inches / constants.INCHES_IN_FEET);
@@ -381,8 +384,24 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .info-text {
   line-height: 30px;
+}
+
+.main-personal {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  height: 100vh;
+
+  .v-card {
+    min-width: 1000px;
+    max-height: 700px; 
+  }
+}
+.v-card {
+  background-color: #eee;
 }
 </style>

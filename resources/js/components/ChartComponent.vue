@@ -1,15 +1,16 @@
 <template>
-<v-hover v-slot:default="{ hover }" :disabled="false" :value="false">
-  <v-sheet :elevation="hover ? 5 : 2">
-    <span class="font-weight-bold header ml-3 grey--text">Weight History Chart</span>
-    <v-sparkline :value="value" :gradient="gradient" :smooth="radius || false" :padding="padding" :line-width="width" :stroke-linecap="lineCap" :show-labels="true" :labels="labels" :gradient-direction="gradientDirection" :fill="fill" :type="type" :label-size="labelSize" :auto-line-width="autoLineWidth" auto-draw>
-    </v-sparkline>
-  </v-sheet>
-</v-hover>
+<div class="main-chart-dashboard" v-bind:class="{'main-chart': standAlone}">
+  <v-hover v-slot:default="{ hover }" :disabled="false" :value="false">
+    <v-sheet :elevation="hover ? 5 : 2">
+      <span class="font-weight-bold header ml-3 grey--text">Weight History Chart</span>
+      <v-sparkline :value="value" :gradient="gradient" :smooth="radius || false" :padding="padding" :line-width="width" :stroke-linecap="lineCap" :show-labels="true" :labels="labels" :gradient-direction="gradientDirection" :fill="fill" :type="type" :label-size="labelSize" :auto-line-width="autoLineWidth" auto-draw>
+      </v-sparkline>
+    </v-sheet>
+  </v-hover>
+</div>
 </template>
 
 <script>
-
 import * as constants from '../constants';
 
 import {
@@ -40,6 +41,9 @@ export default {
     ...mapGetters([
       'getWeights', 'weightUnit', 'heightUnit',
     ]),
+    standAlone() {
+      return this.$route.path != '/home';
+    },
   },
   watch: {
     getWeights() {
@@ -78,3 +82,14 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+$colorBack: #eee;
+.main-chart .v-sheet {
+  margin: 20px;
+  background-color: $colorBack;
+}
+.main-chart-dashboard  .v-sheet{
+  background-color: $colorBack;
+}
+</style>

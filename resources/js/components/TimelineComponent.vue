@@ -65,67 +65,67 @@
       Close
     </v-btn>
   </v-snackbar>
-
-  <v-card color="grey lighten-5" light text hover>
-    <v-card-text primary-title>
-      <v-row>
-        <v-col sm="3" md="3">
-          <v-select :items="entriesPerPageList" v-model="weightsPerPage" label="Entries per page"></v-select>
-        </v-col>
-        <v-col sm="9" md="9" class="mt-4">
-          <v-btn text color="success" @click="createWeightDialog = true">+ Add new weight</v-btn>
-        </v-col>
-      </v-row>
-      <v-divider></v-divider>
-      <v-timeline v-if="hasWeights" right clipped light class="aligned-left">
-        <v-timeline-item v-for="element in getWeightsPaginated" :icon="element.icon" :key="element.id" right class="mb-4" :color="element.colorBack" small>
-          <v-row justify="space-between">
-            <v-col cols="8">
-              <v-text-field v-if="isEditing(element.id)" v-model="elementValue" :rules="rules" :color="element.colorBack" :suffix="weightUnit" class="headline font-weight-bold" hint="Weight" @keypress="allowOnlyNumbers" :value="convertToWeightUnit(element.weight)"></v-text-field>
-              <span v-else :class="element.color" class="headline font-weight-bold text--darken-4">{{ convertToWeightUnit(element.weight)}}</span>
-              <span v-if="isNotEditing(element.id)" class="title darkgray--text">{{ weightUnit }}</span>
-            </v-col>
-            <v-col v-if="isEditing(element.id)" class="text-right" cols="2">
-              <v-btn x-small text>
-                <v-btn x-small icon color="black">
-                  <v-icon @click="updateWeight()" small left class="mx-1" title="Save">save</v-icon>
+  <div v-bind:class="{'main-timeline': standAlone}">
+    <v-card color="grey lighten-5" light text hover class="main-card">
+      <v-card-text primary-title>
+        <v-row>
+          <v-col sm="3" md="3">
+            <v-select :items="entriesPerPageList" v-model="weightsPerPage" label="Entries per page"></v-select>
+          </v-col>
+          <v-col sm="9" md="9" class="mt-4">
+            <v-btn text color="success" @click="createWeightDialog = true">+ Add new weight</v-btn>
+          </v-col>
+        </v-row>
+        <v-divider></v-divider>
+        <v-timeline v-if="hasWeights" right clipped light class="aligned-left">
+          <v-timeline-item v-for="element in getWeightsPaginated" :icon="element.icon" :key="element.id" right class="mb-4" :color="element.colorBack" small>
+            <v-row justify="space-between">
+              <v-col cols="8">
+                <v-text-field v-if="isEditing(element.id)" v-model="elementValue" :rules="rules" :color="element.colorBack" :suffix="weightUnit" class="headline font-weight-bold" hint="Weight" @keypress="allowOnlyNumbers" :value="convertToWeightUnit(element.weight)"></v-text-field>
+                <span v-else :class="element.color" class="headline font-weight-bold text--darken-4">{{ convertToWeightUnit(element.weight)}}</span>
+                <span v-if="isNotEditing(element.id)" class="title darkgray--text">{{ weightUnit }}</span>
+              </v-col>
+              <v-col v-if="isEditing(element.id)" class="text-right" cols="2">
+                <v-btn x-small text>
+                  <v-btn x-small icon color="black">
+                    <v-icon @click="updateWeight()" small left class="mx-1" title="Save">save</v-icon>
+                  </v-btn>
                 </v-btn>
-              </v-btn>
-            </v-col>
-            <v-col v-if="isEditing(element.id)" class="text-right" cols="2">
-              <v-btn x-small icon color="black">
-                <v-icon small left class="mx-1" @click="undoWeight()" title="Undo">undo</v-icon>
-              </v-btn>
-            </v-col>
-            <v-col v-if="isNotEditing(element.id)" class="text-right" cols="2">
-              <v-btn x-small text>
+              </v-col>
+              <v-col v-if="isEditing(element.id)" class="text-right" cols="2">
                 <v-btn x-small icon color="black">
-                  <v-icon @click="editWeight(element.id, convertToWeightUnit(element.weight))" small left class="mx-1" title="Edit">edit</v-icon>
+                  <v-icon small left class="mx-1" @click="undoWeight()" title="Undo">undo</v-icon>
                 </v-btn>
-              </v-btn>
-            </v-col>
-            <v-col v-if="isNotEditing(element.id)" class="text-right" cols="2">
-              <v-btn x-small icon color="red">
-                <v-icon @click="deleteDialog = true; deleteWeightId = element.id;" small left class="mx-1" title="Delete">remove_circle</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-          <template v-slot:opposite>
-            <span class="subheading font-weight-bold text--lighten-1" :class="element.color">{{ getMonth(element.date) }} {{ getDay(element.date) }} </span>
-            <div class="subheading font-weight-bold darkgray--text">{{ getYear(element.date) }}</div>
-          </template>
-        </v-timeline-item>
-      </v-timeline>
-      <div class="text-center">
-        <v-pagination v-model="page" :length="getTotalPages" prev-icon="mdi-menu-left" next-icon="mdi-menu-right"></v-pagination>
-      </div>
-    </v-card-text>
-  </v-card>
+              </v-col>
+              <v-col v-if="isNotEditing(element.id)" class="text-right" cols="2">
+                <v-btn x-small text>
+                  <v-btn x-small icon color="black">
+                    <v-icon @click="editWeight(element.id, convertToWeightUnit(element.weight))" small left class="mx-1" title="Edit">edit</v-icon>
+                  </v-btn>
+                </v-btn>
+              </v-col>
+              <v-col v-if="isNotEditing(element.id)" class="text-right" cols="2">
+                <v-btn x-small icon color="red">
+                  <v-icon @click="deleteDialog = true; deleteWeightId = element.id;" small left class="mx-1" title="Delete">remove_circle</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+            <template v-slot:opposite>
+              <span class="subheading font-weight-bold text--lighten-1" :class="element.color">{{ getMonth(element.date) }} {{ getDay(element.date) }} </span>
+              <div class="subheading font-weight-bold darkgray--text">{{ getYear(element.date) }}</div>
+            </template>
+          </v-timeline-item>
+        </v-timeline>
+        <div class="text-center">
+          <v-pagination v-model="page" :length="getTotalPages" prev-icon="mdi-menu-left" next-icon="mdi-menu-right"></v-pagination>
+        </div>
+      </v-card-text>
+    </v-card>
+  </div>
 </div>
 </template>
 
 <script>
-
 import * as constants from '../constants';
 
 import {
@@ -161,6 +161,9 @@ export default {
     ...mapGetters([
       'getWeights', 'hasWeights', 'getNextWeightId', 'weightUnit', 'heightUnit',
     ]),
+    standAlone() {
+      return this.$route.path != '/home';
+    },
     getUser() {
       return this.$store.getters.getUser;
     },
@@ -232,13 +235,28 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .aligned-left {
   position: relative;
   left: -60px;
 }
 
+.main-timeline {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+
+  .main-card {
+    min-width: 1000px;
+  }
+}
+
 .darkgray--text {
   color: #BDBDBD;
+}
+
+.v-card__text {
+  background: #eee;
 }
 </style>

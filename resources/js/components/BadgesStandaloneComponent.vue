@@ -1,25 +1,31 @@
 <template>
-<div > 
-  <v-layout row class="ma-1 ">
-    <v-flex xs6 sm6 md6>
-      <badge-component :badge="badge1" :badgeValue="getCurrentWeight" :unit="weightUnit" />
-    </v-flex>
-    <v-flex xs6 sm6 md6>
-      <badge-component :badge="badge2" :badgeValue="desired_weight" :unit="weightUnit" />
-    </v-flex>
-    <v-flex xs6 sm6 md6>
-      <badge-component :badge="badge3" :badgeValue="healthyBMIRange" :unit="weightUnit" />
-    </v-flex>
-    <v-flex xs6 sm6 md6>
-      <badge-component :badge="badge4" :badgeValue="idealWeight" :unit="weightUnit" />
-    </v-flex>
-    <v-flex xs6 sm6 md6>
-      <badge-component :badge="badge5" :badgeValue="caloriesNeeded" :unit="calorieUnit" />
-    </v-flex>
-    <v-flex xs6 sm6 md6>
-      <badge-component :badge="badge6" :badgeValue="caloriesToLoseOnePound" :unit="calorieUnit" />
-    </v-flex>
-  </v-layout>
+<div>
+  <v-container>
+    <v-row class="ma-0 pa-0 main-badges">
+      <v-col>
+        <badge-component :badge="badge1" :badgeValue="getCurrentWeight" :unit="weightUnit" />
+      </v-col>
+      <v-col>
+        <badge-component :badge="badge2" :badgeValue="desired_weight" :unit="weightUnit" />
+      </v-col>
+    </v-row>
+    <v-row class="ma-0 pa-0  main-badges">
+      <v-col>
+        <badge-component :badge="badge3" :badgeValue="healthyBMIRange" :unit="weightUnit" />
+      </v-col>
+      <v-col>
+        <badge-component :badge="badge4" :badgeValue="idealWeight" :unit="weightUnit" />
+      </v-col>
+    </v-row>
+    <v-row class="ma-0 pa-0  main-badges">
+      <v-col>
+        <badge-component :badge="badge5" :badgeValue="caloriesNeeded" :unit="calorieUnit" />
+      </v-col>
+      <v-col>
+        <badge-component :badge="badge6" :badgeValue="caloriesToLoseOnePound" :unit="calorieUnit" />
+      </v-col>
+    </v-row>
+  </v-container>
 </div>
 </template>
 
@@ -39,7 +45,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getCurrentWeight', 'getCurrentWeightInLbs','getCurrentWeightInKg', 'getUser', 'getAge', 'weightUnit', 'heightUnit',
+      'getCurrentWeight', 'getCurrentWeightInLbs', 'getCurrentWeightInKg', 'getUser', 'getAge', 'weightUnit', 'heightUnit',
     ]),
     standAlone() {
       return this.$route.path != '/home';
@@ -48,7 +54,7 @@ export default {
       let desired_weight = 0;
       if (this.weightUnit == "lbs") {
         desired_weight = this.getUser.desired_weight;
-      } else {  
+      } else {
         desired_weight = this.getUser.desired_weight * constants.RATIO_LBS_TO_KG;
       }
       return Math.round(desired_weight);
@@ -139,4 +145,18 @@ export default {
 
 }
 </script>
- 
+
+<style lang="scss" scoped>
+.main-badges .col {
+  text-align: center;
+
+  .v-card {
+    max-width: 800px !important;
+  }
+}
+
+.container {
+  background: #c7c7c76e;
+  width: 1000px;
+}
+</style>

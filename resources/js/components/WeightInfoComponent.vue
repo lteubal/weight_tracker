@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="main-weight-info-dashboard" v-bind:class="{'main-weight-info': standAlone}">
   <v-hover v-slot:default="{ hover }" :disabled="false" :value="false">
     <v-card :elevation="hover ? 6 : 2" class="mx-4 my-0 gauge-card" light>
 
@@ -48,7 +48,10 @@ export default {
     },
     getCurrentBMILevelColor() {
       return this.$store.getters.getCurrentBMILevelColor;
-    }
+    },
+    standAlone() {
+      return this.$route.path != '/home';
+    },
   },
   mounted: function () {
     this.setGaugeValueToBMI();
@@ -57,16 +60,17 @@ export default {
     return {
       chartOptions: {
         chart: {
-          type: 'gauge'
+          type: 'gauge',
+          backgroundColor: '#eee',
         },
-        title: null,
+        title: null, 
         pane: {
           center: ['52.4%', '90%'],
           size: '180%',
           startAngle: -90,
           endAngle: 90,
           background: {
-            backgroundColor: '#EEE',
+            backgroundColor: '#DDD',
 
             innerRadius: '60%',
             outerRadius: '100%',
@@ -149,7 +153,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
+$colorBack: #eee;
+
 .bmi {
   color: #00897B;
   font-weight: bold;
@@ -159,12 +166,32 @@ export default {
 
 .gauge-chart {
   height: 240px;
-  width: 100%;
+  width: 400px;
   padding-top: 20px;
+  margin: 0px auto;
 }
 
 .gauge-card {
-  width: 500px;
   padding-top: 20px;
+  text-align: center;
+  display: inline; 
+  background: $colorBack;
+}
+
+.main-weight-info-dashboard {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background: $colorBack;
+}
+
+.main-weight-info {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  background: inherit;
+  .v-card {
+    min-width: 1000px;
+  }
 }
 </style>
