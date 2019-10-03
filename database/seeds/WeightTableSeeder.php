@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Weight;
 
-class DatabaseSeeder extends Seeder
+class WeightTableSeeder extends Seeder
 {
     /**
      * Seed the application's database.
@@ -11,8 +12,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(UserTableSeeder::class);
-        $this->call(WeightTableSeeder::class);
- 
+        App\Weight::truncate();
+        $count = 100;
+        factory(Weight::class, $count)->create(); 
     }
 }
