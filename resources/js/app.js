@@ -95,4 +95,8 @@ const app = new Vue({
     drawer: null
   }),
   router,
+  created() {
+    this.$store.dispatch('loadWeights');
+    this.$store.dispatch('loadUser');
+  },
 });

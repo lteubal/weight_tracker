@@ -11,9 +11,8 @@ class WeightTableSeeder extends Seeder
      * @return void
      */
     public function run()
-    {
-        App\Weight::truncate();
-        $count = 100;
+    {        
+        $count = 35;
         factory(Weight::class, $count)->create(); 
     }
 }

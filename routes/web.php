@@ -16,5 +16,9 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+Route::get('/user', 'UserController@index');
+Route::put('/user/{user}', 'UserController@update');
+
+Route::apiResource('weights', 'WeightController');
  
 Route::get('/{any}', 'HomeController@index');

@@ -39,6 +39,6 @@ class User extends Authenticatable
 
     public function weights()
     {
-        return $this->hasMany('App\Weight');
+        return $this->hasMany('App\Weight')->orderBy('date', 'DESC')->orderBy('created_at', 'DESC')->orderBy('updated_at', 'DESC');
     }
 }

@@ -2878,7 +2878,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       desiredWeight: 0,
       files: null,
       genderList: ['Male', 'Female', ' - '],
-      gender: '',
+      gender: ' - ',
       feet: 5,
       inches: 4,
       centimeters: 170,
@@ -2900,17 +2900,22 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return this.getUser.name + ' ' + this.getUser.last_name;
     },
     birthdateFormatted: function birthdateFormatted() {
-      var FormattedDate = new Date(this.getUser.birthdate + 'T00:00:00').toISOString().substr(0, 10);
-      return FormattedDate;
+      if (this.getUser.birthdate) {
+        var FormattedDate = new Date(this.getUser.birthdate + 'T00:00:00').toISOString().substr(0, 10);
+        return FormattedDate;
+      } else {
+        return '';
+      }
     },
     birthdateFormattedUSA: function birthdateFormattedUSA() {
       var FormattedDate = new Date(this.getUser.birthdate + 'T00:00:00').toLocaleDateString('en-US').substr(0, 10);
       return FormattedDate;
     },
-    getGender: function getGender() {
-      return this.getUser.gender.charAt(0).toUpperCase() + this.getUser.gender.slice(1).toLowerCase();
-    },
     getSystem: function getSystem() {
+      if (!this.getUser.gender) {
+        return 'Standard';
+      }
+
       return this.getUser.system.charAt(0).toUpperCase() + this.getUser.system.slice(1).toLowerCase();
     },
     isUsingLbs: function isUsingLbs() {
@@ -2920,9 +2925,17 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return this.heightUnit != "m";
     },
     height: function height() {
+      if (!this.feet || !this.inches) {
+        return '';
+      }
+
       return "".concat(this.feet, "' ").concat(this.inches, "\"");
     },
     heightInCm: function heightInCm() {
+      if (!this.centimeters) {
+        return '';
+      }
+
       return "".concat(this.centimeters, " cm");
     }
   }),
@@ -3003,10 +3016,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     updateDataFromStore: function updateDataFromStore() {
       this.birthdate = this.birthdateFormatted;
       this.activityLevel = this.getUser.activity_level;
+      this.gender = this.getUser.gender;
       this.name = this.getUser.name;
       this.lastName = this.getUser.last_name;
       this.email = this.getUser.email;
-      this.gender = this.getGender;
       this.system = this.getSystem;
       this.desiredWeight = this.getUser.desired_weight;
       this.avatar = this.getUser.avatar;
@@ -3014,8 +3027,12 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     }
   },
   mounted: function mounted() {
+    var _this = this;
+
     this.updateDataFromStore();
-    this.getHeight();
+    setTimeout(function () {
+      _this.updateDataFromStore();
+    }, 900);
   }
 });
 
@@ -61119,7 +61136,11 @@ var app = new Vue({
       drawer: null
     };
   },
-  router: router
+  router: router,
+  created: function created() {
+    this.$store.dispatch('loadWeights');
+    this.$store.dispatch('loadUser');
+  }
 });
 
 /***/ }),
@@ -61990,7 +62011,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./constants */ "./resources/js/constants.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./constants */ "./resources/js/constants.js");
+
 
 
 
@@ -61998,77 +62022,29 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 var state = {
   current_bmi: 0,
   nonSavedSelectedSystem: 'Standard',
-  weights: [{
-    id: 11,
-    userId: 1,
-    date: "2019-03-21",
-    weight: "168.20"
-  }, {
-    id: 10,
-    userId: 1,
-    date: "2019-03-21",
-    weight: "168.20"
-  }, {
-    id: 9,
-    userId: 1,
-    date: "2019-03-20",
-    weight: "157.20"
-  }, {
-    id: 8,
-    userId: 1,
-    date: "2019-03-20",
-    weight: "167.20"
-  }, {
-    id: 7,
-    userId: 1,
-    date: "2019-03-20",
-    weight: "187.20"
-  }, {
-    id: 6,
-    userId: 1,
-    date: "2019-03-20",
-    weight: "187.20"
-  }, {
-    id: 5,
-    userId: 1,
-    date: "2019-03-20",
-    weight: "187.20"
-  }, {
-    id: 4,
-    userId: 1,
-    date: "2019-01-01",
-    weight: "178.80"
-  }, {
-    id: 3,
-    userId: 1,
-    date: "2018-11-20",
-    weight: "177.10"
-  }, {
-    id: 2,
-    userId: 1,
-    date: "2018-11-03",
-    weight: "178.50"
-  }, {
-    id: 1,
-    userId: 1,
-    date: "2018-10-01",
-    weight: "180.20"
-  }],
+  weights: [],
   user: {
-    id: 1,
-    name: 'Joe',
-    last_name: 'Smith',
-    email: 'jsmith@gmail.com',
-    desired_weight: '160',
-    height_in_inches: '74.5',
-    gender: 'male',
-    birthdate: '1930-12-31',
-    activity_level: '85',
-    system: 'Standard',
-    avatar: '/images/avatar.png'
+    id: 0,
+    name: '',
+    last_name: '',
+    email: '',
+    desired_weight: '',
+    height_in_inches: '',
+    gender: '',
+    birthdate: '',
+    activity_level: '',
+    system: '',
+    avatar: ''
   }
 };
 var mutations = {
+  SET_WEIGHTS: function SET_WEIGHTS(state, weights) {
+    state.weights = weights;
+  },
+  SET_USER: function SET_USER(state, user) {
+    state.user = user;
+    state.nonSavedSelectedSystem = state.user.system;
+  },
   ADD_WEIGHT: function ADD_WEIGHT(state, entry) {
     state.weights.unshift(entry);
   },
@@ -62095,44 +62071,89 @@ var mutations = {
 };
 var actions = {
   addWeight: function addWeight(context, entry) {
-    context.commit("ADD_WEIGHT", entry);
+    axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/weights/', {
+      date: entry.date,
+      weight: entry.weight
+    }).then(function (result) {
+      context.commit("ADD_WEIGHT", entry);
+    });
   },
   deleteWeight: function deleteWeight(context, id) {
-    context.commit("DELETE_WEIGHT", id);
+    axios__WEBPACK_IMPORTED_MODULE_2___default.a["delete"]('/weights/' + id).then(function (result) {
+      context.commit("DELETE_WEIGHT", id);
+    });
   },
   updateWeight: function updateWeight(context, element) {
-    context.commit("UPDATE_WEIGHT", element);
+    axios__WEBPACK_IMPORTED_MODULE_2___default.a.put('/weights/' + element.id, {
+      weight: element.weight
+    }).then(function (result) {
+      context.commit("UPDATE_WEIGHT", element);
+    });
   },
   updateUser: function updateUser(context, user) {
-    context.commit("UPDATE_USER", user);
+    axios__WEBPACK_IMPORTED_MODULE_2___default.a.put('/user/' + user.id, {
+      name: user.name,
+      last_name: user.last_name,
+      email: user.email,
+      desired_weight: user.desired_weight,
+      height_in_inches: user.height_in_inches,
+      gender: user.gender,
+      birthdate: user.birthdate,
+      activity_level: user.activity_level,
+      system: user.system,
+      avatar: user.avatar
+    }).then(function (result) {
+      context.commit('SET_USER', user);
+    });
   },
   updateNonSavedSelectedSystem: function updateNonSavedSelectedSystem(context, system) {
     context.commit("UPDATE_NON_SAVED_SELECTED_SYSTEM", system);
+  },
+  loadWeights: function loadWeights(context) {
+    axios__WEBPACK_IMPORTED_MODULE_2___default.a.get('/weights').then(function (r) {
+      return r.data;
+    }).then(function (weights) {
+      context.commit('SET_WEIGHTS', weights);
+    });
+  },
+  loadUser: function loadUser(context) {
+    axios__WEBPACK_IMPORTED_MODULE_2___default.a.get('/user').then(function (r) {
+      return r.data;
+    }).then(function (user) {
+      context.commit('SET_USER', user);
+    });
   }
 };
 var getters = {
   getWeights: function getWeights(state) {
-    var weights = Object.values(state.weights).sort();
+    var weights = Object.values(state.weights).sort(function (a, b) {
+      return new Date(b.date) - new Date(a.date) || new Date(b.created_at) - new Date(a.created_at);
+    });
     weights.map(function (weight, idx, weights) {
       weight.color = 'grey--text';
       weight.colorBack = 'grey darken-2';
       weight.icon = 'drag_handle';
 
-      if (idx < state.weights.length - 1 && weights[idx].weight < weights[idx + 1].weight) {
-        weight.color = 'green--text';
-        weight.colorBack = 'green darken-2';
+      if (idx < state.weights.length - 1 && +weights[idx].weight < +weights[idx + 1].weight) {
+        weight.color = 'teal--text';
+        weight.colorBack = 'teal darken-2';
         weight.icon = 'arrow_downward';
       }
 
-      if (idx < state.weights.length - 1 && weights[idx].weight > weights[idx + 1].weight) {
-        weight.color = 'red--text';
-        weight.colorBack = 'red darken-2';
+      if (idx < state.weights.length - 1 && +weights[idx].weight > +weights[idx + 1].weight) {
+        weight.color = 'purple--text';
+        weight.colorBack = 'purple darken-2';
         weight.icon = 'arrow_upward';
       }
 
       return weight;
     });
-    weights[weights.length - 1].icon = 'star';
+
+    if (weights.length) {
+      weights[weights.length - 1].icon = 'star';
+    }
+
+    ;
     return weights.sort(function (a, b) {
       return new Date(b.date) - new Date(a.date);
     });
@@ -62142,19 +62163,32 @@ var getters = {
   },
   getNextWeightId: function getNextWeightId() {
     var weights = Object.values(state.weights);
-    var maxId = weights.reduce(function (max, weights) {
-      return weights.id > max ? weights.id : max;
-    }, weights[0].id);
-    return maxId + 1;
+
+    if (weights.length) {
+      var maxId = weights.reduce(function (max, weights) {
+        return weights.id > max ? weights.id : max;
+      }, weights[0].id);
+      return maxId + 1;
+    } else {
+      return 1;
+    }
   },
   getUser: function getUser(state) {
     return state.user;
   },
   getCurrentWeightInLbs: function getCurrentWeightInLbs(state) {
-    return state.weights[0].weight;
+    if (state.weights.length) {
+      return state.weights[0].weight;
+    } else {
+      return 0;
+    }
   },
   getCurrentWeightInKg: function getCurrentWeightInKg(state) {
-    return (state.weights[0].weight * _constants__WEBPACK_IMPORTED_MODULE_2__["RATIO_LBS_TO_KG"]).toFixed(2);
+    if (state.weights.length) {
+      return (state.weights[0].weight * _constants__WEBPACK_IMPORTED_MODULE_3__["RATIO_LBS_TO_KG"]).toFixed(2);
+    } else {
+      return 0;
+    }
   },
   getCurrentWeight: function getCurrentWeight(state, getters) {
     return state.nonSavedSelectedSystem == "Standard" ? getters.getCurrentWeightInLbs : getters.getCurrentWeightInKg;

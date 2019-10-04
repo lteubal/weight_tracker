@@ -11,9 +11,10 @@ class UserTableSeeder extends Seeder
      * @return void
      */
     public function run()
-    {
+    {        
         $count = 1;
-        factory(User::class, $count)->create([
+        factory(User::class, $count)->create([ 
+            'id' => 1,
             'name' => 'demo',
             'last_name' => 'demo',
             'email' => 'demo@demo.com',

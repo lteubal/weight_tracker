@@ -234,7 +234,7 @@ export default {
       desiredWeight: 0,
       files: null,
       genderList: ['Male', 'Female', ' - '],
-      gender: '',
+      gender: ' - ',
       feet: 5,
       inches: 4,
       centimeters: 170,
@@ -268,17 +268,21 @@ export default {
       return this.getUser.name + ' ' + this.getUser.last_name;
     },
     birthdateFormatted() {
-      let FormattedDate = new Date(this.getUser.birthdate + 'T00:00:00').toISOString().substr(0, 10);
-      return FormattedDate;
+      if(this.getUser.birthdate) {
+        let FormattedDate = new Date(this.getUser.birthdate + 'T00:00:00').toISOString().substr(0, 10);
+        return FormattedDate;
+      } else {
+        return '';
+      }
     },
     birthdateFormattedUSA() {
       let FormattedDate = new Date(this.getUser.birthdate + 'T00:00:00').toLocaleDateString('en-US').substr(0, 10);
       return FormattedDate;
-    },
-    getGender() {
-      return this.getUser.gender.charAt(0).toUpperCase() + this.getUser.gender.slice(1).toLowerCase();
-    },
+    }, 
     getSystem() {
+       if(!this.getUser.gender) {
+        return 'Standard';
+      }
       return this.getUser.system.charAt(0).toUpperCase() + this.getUser.system.slice(1).toLowerCase();
     },
     isUsingLbs() {
@@ -288,9 +292,15 @@ export default {
       return this.heightUnit != "m";
     },
     height() {
+      if(!this.feet || !this.inches) {
+        return '';
+      }
       return `${this.feet}' ${this.inches}"`;
     },
     heightInCm() {
+      if(!this.centimeters) {
+        return '';
+      }
       return `${this.centimeters} cm`;
     }
 
@@ -371,10 +381,10 @@ export default {
     updateDataFromStore() {
       this.birthdate = this.birthdateFormatted;
       this.activityLevel = this.getUser.activity_level;
+      this.gender = this.getUser.gender;
       this.name = this.getUser.name;
       this.lastName = this.getUser.last_name;
       this.email = this.getUser.email;
-      this.gender = this.getGender;
       this.system = this.getSystem;
       this.desiredWeight = this.getUser.desired_weight;
       this.avatar = this.getUser.avatar;
@@ -383,8 +393,11 @@ export default {
   },
   mounted: function () {
     this.updateDataFromStore();
-    this.getHeight();
-  }
+    setTimeout(() => {
+      this.updateDataFromStore();
+    }, 900);
+  },
+ 
 }
 </script>
 
