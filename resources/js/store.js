@@ -56,7 +56,7 @@ const mutations = {
 
 const actions = {
   addWeight(context, entry) {
-    axios
+    return axios
       .post('/weights/', {
         date: entry.date,
         weight: entry.weight
@@ -67,7 +67,7 @@ const actions = {
 
   },
   deleteWeight(context, id) {
-    axios
+    return axios
       .delete('/weights/' + id)
       .then(result => {
         context.commit("DELETE_WEIGHT", id);

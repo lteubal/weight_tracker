@@ -50,21 +50,14 @@
     </v-dialog>
   </v-row>
 
-  <!-- deleted successfully message -->
+  <!--  message -->
   <v-snackbar v-model="snackbar" :timeout="timeout" :top="true">
-    {{ deletedMessage }}
+    {{ message }}
     <v-btn color="blue" text @click="snackbar = false">
       Close
     </v-btn>
   </v-snackbar>
 
-  <!-- created successfully message -->
-  <v-snackbar v-model="snackbarCreated" :timeout="timeout" :top="true">
-    {{ createdMessage }}
-    <v-btn color="blue" text @click="snackbarCreated = false">
-      Close
-    </v-btn>
-  </v-snackbar>
   <div v-bind:class="{'main-timeline': standAlone}">
     <v-card color="grey lighten-5" light text hover class="main-card">
       <v-card-text primary-title>
@@ -143,9 +136,7 @@ export default {
     newWeightValueToCreate: 0,
     newDateToCreate: new Date().toISOString().substr(0, 10),
     snackbar: false,
-    snackbarCreated: false,
-    deletedMessage: 'The entry was deleted.',
-    createdMessage: 'The entry was added.',
+    message: '',
     timeout: 2000,
     deleteDialog: false,
     createWeightDialog: false,
@@ -190,10 +181,15 @@ export default {
         element.weight = element.weight / constants.RATIO_LBS_TO_KG;
       }
       element.weight = element.weight.toFixed(2);
-      this.$store.dispatch('addWeight', element);
+      this.$store.dispatch('addWeight', element).then(response => {
+          this.message = 'The entry was added.';
+          this.snackbar = true;
+      }, error => {
+          this.message = 'The entry couldn\'t be added. Please, try again later.';
+          this.snackbar = true;
+      }); ;
       this.newWeightValueToCreate = 0;
       this.newDateToCreate = new Date().toISOString().substr(0, 10);
-      this.snackbarCreated = true;
     },
     editWeight(id, weight) {
       this.elementValue = weight;
@@ -211,9 +207,14 @@ export default {
       this.editWeight(-1);
     },
     deleteWeight() {
-      this.$store.dispatch('deleteWeight', this.deleteWeightId);
+      this.$store.dispatch('deleteWeight', this.deleteWeightId).then(response => {
+        this.message = 'The entry was deleted.';
+        this.snackbar = true; 
+      }, error => {
+        this.message = 'The entry couldn\'t be deleted. Please, try again later.';
+        this.snackbar = true; 
+      }); 
       this.editWeight(-1);
-      this.snackbar = true;
     },
     undoWeight() {
       this.editWeightId = -1;

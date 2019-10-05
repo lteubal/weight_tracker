@@ -53,11 +53,13 @@
             </v-flex>
             <v-flex xs2>
               <v-avatar size="55">
-                <img :src="avatar">
+                <img :src="avatar"> 
               </v-avatar>
             </v-flex>
             <v-flex xs7>
-              <v-file-input v-model='files' @change="handleFileUpload()" prepend-icon="mdi-camera" :rules="rulesAvatar" accept="image/png, image/jpeg, image/bmp" label="Avatar" placeholder="Pick new avatar to replace it"></v-file-input>
+                  <input type="file" @change="onFileChange">
+
+              <!-- <v-file-input v-model='files' @change="handleFileUpload" prepend-icon="mdi-camera" :rules="rulesAvatar" accept="image/png, image/jpeg, image/bmp" label="Avatar" placeholder="Pick new avatar to replace it"></v-file-input> -->
             </v-flex>
             <v-flex xs1 class="text-right">
               <v-btn x-small text>
@@ -245,7 +247,7 @@ export default {
       menu: false,
       birthdate: '',
       activityLevel: 10,
-      avatar: '',
+      avatar: '', 
       rulesAvatar: [
         value => !value || value.size < 2000000 || 'Avatar size should be less than 2 MB!',
       ],
@@ -329,7 +331,7 @@ export default {
       element.activity_level = +this.activityLevel;
       element.system = this.system;
       element.avatar = this.avatar;
-      this.handleFileUpload();
+      
       this.$store.dispatch('updateUser', element);
       this.editMode = false;
 
@@ -348,8 +350,21 @@ export default {
       this.updateDataFromStore();
       this.updNonSavedSelectedSystem(this.getSystem);
     },
-    handleFileUpload() {
-      console.log(this.files);
+    onFileChange(e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length)
+        return;
+      this.createImage(files[0]);
+    }, 
+    createImage(file) {
+      var image = new Image();
+      var reader = new FileReader();
+      var vm = this;
+
+      reader.onload = (e) => {
+        vm.avatar = e.target.result;
+      };
+      reader.readAsDataURL(file);
     },
     updNonSavedSelectedSystem(val) {
       this.$store.dispatch('updateNonSavedSelectedSystem', {

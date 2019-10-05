@@ -2862,6 +2862,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2965,7 +2967,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       element.activity_level = +this.activityLevel;
       element.system = this.system;
       element.avatar = this.avatar;
-      this.handleFileUpload();
       this.$store.dispatch('updateUser', element);
       this.editMode = false;
     },
@@ -2983,8 +2984,21 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       this.updateDataFromStore();
       this.updNonSavedSelectedSystem(this.getSystem);
     },
-    handleFileUpload: function handleFileUpload() {
-      console.log(this.files);
+    onFileChange: function onFileChange(e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+      this.createImage(files[0]);
+    },
+    createImage: function createImage(file) {
+      var image = new Image();
+      var reader = new FileReader();
+      var vm = this;
+
+      reader.onload = function (e) {
+        vm.avatar = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
     },
     updNonSavedSelectedSystem: function updNonSavedSelectedSystem(val) {
       this.$store.dispatch('updateNonSavedSelectedSystem', {
@@ -3175,13 +3189,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3196,9 +3203,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       newWeightValueToCreate: 0,
       newDateToCreate: new Date().toISOString().substr(0, 10),
       snackbar: false,
-      snackbarCreated: false,
-      deletedMessage: 'The entry was deleted.',
-      createdMessage: 'The entry was added.',
+      message: '',
       timeout: 2000,
       deleteDialog: false,
       createWeightDialog: false,
@@ -3233,6 +3238,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   }),
   methods: {
     createWeight: function createWeight() {
+      var _this = this;
+
       var element = {};
       element.weight = +this.newWeightValueToCreate;
       element.date = this.newDateToCreate;
@@ -3244,10 +3251,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       element.weight = element.weight.toFixed(2);
-      this.$store.dispatch('addWeight', element);
+      this.$store.dispatch('addWeight', element).then(function (response) {
+        _this.message = 'The entry was added.';
+        _this.snackbar = true;
+      }, function (error) {
+        _this.message = 'The entry couldn\'t be added. Please, try again later.';
+        _this.snackbar = true;
+      });
+      ;
       this.newWeightValueToCreate = 0;
       this.newDateToCreate = new Date().toISOString().substr(0, 10);
-      this.snackbarCreated = true;
     },
     editWeight: function editWeight(id, weight) {
       this.elementValue = weight;
@@ -3267,9 +3280,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.editWeight(-1);
     },
     deleteWeight: function deleteWeight() {
-      this.$store.dispatch('deleteWeight', this.deleteWeightId);
+      var _this2 = this;
+
+      this.$store.dispatch('deleteWeight', this.deleteWeightId).then(function (response) {
+        _this2.message = 'The entry was deleted.';
+        _this2.snackbar = true;
+      }, function (error) {
+        _this2.message = 'The entry couldn\'t be deleted. Please, try again later.';
+        _this2.snackbar = true;
+      });
       this.editWeight(-1);
-      this.snackbar = true;
     },
     undoWeight: function undoWeight() {
       this.editWeightId = -1;
@@ -6785,36 +6805,12 @@ var render = function() {
                                     1
                                   ),
                                   _vm._v(" "),
-                                  _c(
-                                    "v-flex",
-                                    { attrs: { xs7: "" } },
-                                    [
-                                      _c("v-file-input", {
-                                        attrs: {
-                                          "prepend-icon": "mdi-camera",
-                                          rules: _vm.rulesAvatar,
-                                          accept:
-                                            "image/png, image/jpeg, image/bmp",
-                                          label: "Avatar",
-                                          placeholder:
-                                            "Pick new avatar to replace it"
-                                        },
-                                        on: {
-                                          change: function($event) {
-                                            return _vm.handleFileUpload()
-                                          }
-                                        },
-                                        model: {
-                                          value: _vm.files,
-                                          callback: function($$v) {
-                                            _vm.files = $$v
-                                          },
-                                          expression: "files"
-                                        }
-                                      })
-                                    ],
-                                    1
-                                  ),
+                                  _c("v-flex", { attrs: { xs7: "" } }, [
+                                    _c("input", {
+                                      attrs: { type: "file" },
+                                      on: { change: _vm.onFileChange }
+                                    })
+                                  ]),
                                   _vm._v(" "),
                                   _c(
                                     "v-flex",
@@ -7917,7 +7913,7 @@ var render = function() {
           }
         },
         [
-          _vm._v("\r\n    " + _vm._s(_vm.deletedMessage) + "\r\n    "),
+          _vm._v("\r\n    " + _vm._s(_vm.message) + "\r\n    "),
           _c(
             "v-btn",
             {
@@ -7925,36 +7921,6 @@ var render = function() {
               on: {
                 click: function($event) {
                   _vm.snackbar = false
-                }
-              }
-            },
-            [_vm._v("\r\n      Close\r\n    ")]
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "v-snackbar",
-        {
-          attrs: { timeout: _vm.timeout, top: true },
-          model: {
-            value: _vm.snackbarCreated,
-            callback: function($$v) {
-              _vm.snackbarCreated = $$v
-            },
-            expression: "snackbarCreated"
-          }
-        },
-        [
-          _vm._v("\r\n    " + _vm._s(_vm.createdMessage) + "\r\n    "),
-          _c(
-            "v-btn",
-            {
-              attrs: { color: "blue", text: "" },
-              on: {
-                click: function($event) {
-                  _vm.snackbarCreated = false
                 }
               }
             },
@@ -62071,7 +62037,7 @@ var mutations = {
 };
 var actions = {
   addWeight: function addWeight(context, entry) {
-    axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/weights/', {
+    return axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/weights/', {
       date: entry.date,
       weight: entry.weight
     }).then(function (result) {
@@ -62079,7 +62045,7 @@ var actions = {
     });
   },
   deleteWeight: function deleteWeight(context, id) {
-    axios__WEBPACK_IMPORTED_MODULE_2___default.a["delete"]('/weights/' + id).then(function (result) {
+    return axios__WEBPACK_IMPORTED_MODULE_2___default.a["delete"]('/weights/' + id).then(function (result) {
       context.commit("DELETE_WEIGHT", id);
     });
   },
