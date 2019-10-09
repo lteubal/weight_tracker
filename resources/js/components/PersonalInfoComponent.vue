@@ -348,18 +348,18 @@ export default {
     undoEditting() {
       this.editMode = false;
       this.updateDataFromStore();
-      this.updNonSavedSelectedSystem(this.getSystem);
-    },
+      this.updNonSavedSelectedSystem(this.getSystem); 
+    },  
     onFileChange(e) {
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length)
-        return;
-      this.createImage(files[0]);
-    }, 
-    createImage(file) {
+        return; 
+      this.createImage(files[0]); 
+    },  
+    createImage(file) { 
       var image = new Image();
       var reader = new FileReader();
-      var vm = this;
+      var vm = this; 
 
       reader.onload = (e) => {
         vm.avatar = e.target.result;

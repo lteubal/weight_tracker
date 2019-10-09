@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.login')
 
-@section('content')
+@section('section3')
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -85,6 +85,8 @@
                     </form>
                 </div>
             </div>
+            <br>  
+            <p>Already a member? <a href="/login"> Login here</a></p>
         </div>
     </div>
 </div>

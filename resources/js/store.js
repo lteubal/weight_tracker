@@ -57,7 +57,7 @@ const mutations = {
 const actions = {
   addWeight(context, entry) {
     return axios
-      .post('/weights/', {
+      .post('/weights', {
         date: entry.date,
         weight: entry.weight
       })

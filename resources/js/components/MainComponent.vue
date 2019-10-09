@@ -100,7 +100,7 @@ export default {
     logout: function () {
       axios.post('/logout').then(response => {
         if (response.status === 302 || 401) {
-          window.location.href = "/login";
+          window.location.href = "/";
         }
       }).catch(error => {
         console.log(error);
