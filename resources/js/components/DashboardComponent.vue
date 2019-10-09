@@ -9,14 +9,14 @@
   </v-row>
   <v-row class="ma-0 pa-0 main-badges">
     <v-col>
-      <v-card v-if="hasWeights" light tile flat color="white" >
+      <v-card light tile flat color="white" >
         <timeline-component />
       </v-card>
     </v-col>
     <v-col>
       <v-row no-gutters >
         <v-col>
-          <v-card v-if="hasWeights" light tile flat color="white" >
+          <v-card light tile flat color="white" >
             <personal-info-component />
           </v-card>
         </v-col>

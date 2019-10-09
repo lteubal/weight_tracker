@@ -21,7 +21,7 @@ class UpdateUsersTable extends Migration
             $table->date('birthdate')->default(\Carbon\Carbon::now());
             $table->smallInteger('activity_level')->default(50);
             $table->enum('system', ['Standard', 'Metric'])->default('Standard');
-            $table->string('avatar')->default('');
+            $table->string('avatar')->default('/images/avatar.png');
         });
     }
 
